@@ -26,13 +26,18 @@
 
 void task_sm_handler(stk_msg_t* msg) {
     switch (msg->sig) {
-    case SIG_MSG_IN_WIFI_CONNECTED:
-        APP_PRINT("[TASK_SM] SIG_MSG_IN_WIFI_CONNECTED\n");
+    case SIG_SM_REQ_CHECK_WIFI_CONNECT:
+        APP_PRINT("[TASK_SM] SIG_SM_REQ_CHECK_WIFI_CONNECT\n");
+        LINK_PHY_FORWARD_MSG_OUT(TASK_SM_ID, SIG_SM_REQ_CHECK_WIFI_CONNECT);
+        break;
+
+    case SIG_SM_RES_WIFI_CONNECTED:
+        APP_PRINT("[TASK_SM] SIG_SM_RES_WIFI_CONNECTED\n");
         main_screen_info.wifi_status = WIFI_CONNECTED;
         break;
 
-    case SIG_MSG_IN_WIFI_DISCONNECTED:
-        APP_PRINT("[TASK_SM] SIG_MSG_IN_WIFI_DISCONNECTED\n");
+    case SIG_SM_RES_WIFI_DISCONNECTED:
+        APP_PRINT("[TASK_SM] SIG_SM_RES_WIFI_DISCONNECTED\n");
         main_screen_info.wifi_status = WIFI_DISCONNECTED;
         break;
 

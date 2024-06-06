@@ -50,7 +50,7 @@ void screen_setting_handler(stk_msg_t* msg) {
     case SIG_BUTTON_DOWN_PRESSED:
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
         if (screen_setting.cursor_select == 0) {
-            screen_setting.cursor_select = 0;
+            screen_setting.cursor_select = 3;
         }
         else {
             screen_setting.cursor_select--;

@@ -19,7 +19,10 @@
 
 #include "screen_manager.h"
 
-#define ESPLINK_UART_RECEIVE_BUFFER_SIZE            (100)
+#define LINK_PHY_FORWARD_MSG_OUT(des_task_id, sig)          link_phy_fw_msg(des_task_id, sig)
+
+#define LINK_PHY_UART_RECEIVE_BUFFER_SIZE            (100)
+#define LINK_PHY_UART_TRANS_BUFFER_SIZE              (16)
 
 /* stk msg from esplink */
 typedef struct {
@@ -33,7 +36,7 @@ typedef struct {
     uint8_t current;
     uint8_t speed_level;
     uint8_t weight;
-} esplink_fw_data_t;
+} link_phy_fw_data_t;
 
 /* type of function call by link phy */
 typedef enum {
@@ -41,8 +44,14 @@ typedef enum {
     SEND_DATA,
 } link_dect_t;
 
-extern uint8_t esplink_buffer_receive[ESPLINK_UART_RECEIVE_BUFFER_SIZE];
+extern uint8_t link_phy_buffer_trans[LINK_PHY_UART_TRANS_BUFFER_SIZE];
+extern uint8_t link_phy_buffer_receive[LINK_PHY_UART_RECEIVE_BUFFER_SIZE];
+
+/* get data usart irq */
 extern void usart2_get_char(uint8_t c);
+
+/* forward msg to link_phy */
+extern void link_phy_fw_msg(uint8_t des_task_id, uint8_t sig);
 extern void link_phy_handler(stk_msg_t* msg);
 
 #ifdef __cplusplus

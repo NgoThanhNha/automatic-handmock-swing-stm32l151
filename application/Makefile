@@ -143,21 +143,21 @@ help:
 	$(print) "[make view_sym] view list symbol size"
 	$(print) ""
 
-# For Linux
-flash: all
-	$(PROGRAMER_PATH)/STM32_Programmer.sh -c port=SWD -w $(TARGET:.axf=.bin) $(APP_START_ADDR_VAL) -rst
+# # For Linux
+# flash: all
+# 	$(PROGRAMER_PATH)/STM32_Programmer.sh -c port=SWD -w $(TARGET:.axf=.bin) $(APP_START_ADDR_VAL) -rst
 
-clean:
-	$(Print) CLEAN $(OBJECTS_DIR) folder
-	@rm -rf $(OBJECTS_DIR)
-
-# # For Windows
 # clean:
 # 	$(Print) CLEAN $(OBJECTS_DIR) folder
-# 	@if exist build (rmdir /s /q $(OBJECTS_DIR) -p)
+# 	@rm -rf $(OBJECTS_DIR)
 
-# flash: all
-# 	st-link_cli.exe -c SWD -P $(TARGET:.axf=.bin) $(APP_START_ADDR_VAL) -Rst
+# For Windows
+clean:
+	$(Print) CLEAN $(OBJECTS_DIR) folder
+	@if exist build (rmdir /s /q $(OBJECTS_DIR) -p)
+
+flash: all
+	st-link_cli.exe -c SWD -P $(TARGET:.axf=.bin) $(APP_START_ADDR_VAL) -Rst
 
 sym: $(TARGET)
 	$(Print) export object name $(<:.axf=.sym)

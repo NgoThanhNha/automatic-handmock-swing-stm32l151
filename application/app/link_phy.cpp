@@ -21,18 +21,21 @@
 #include "task_display.h"
 #include "task_safety.h"
 
-uint8_t esplink_buffer_receive[ESPLINK_UART_RECEIVE_BUFFER_SIZE];
+uint8_t link_phy_buffer_trans[LINK_PHY_UART_TRANS_BUFFER_SIZE];
+uint8_t link_phy_buffer_receive[LINK_PHY_UART_RECEIVE_BUFFER_SIZE];
 uint8_t index_receive = 0;
-esplink_fw_data_t esplink_fw_data;
+uint8_t flag_start_transmiss;
+
+link_phy_fw_data_t esplink_fw_data;
 stk_msg_parser_t* get_msg = (stk_msg_parser_t*)0;
 
 void link_phy_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_LINK_PHY_GET_BUFF:
         APP_PRINT("[LINK_PHY] SIG_LINK_PHY_GET_BUFF\n");
-        switch (esplink_buffer_receive[0]) {
+        switch (link_phy_buffer_receive[1]) {
             case TASK_POST:
-                task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_GET_MSG_IN);
+                task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_GET_MSG_RES);
             break;
 
             default:
@@ -40,9 +43,9 @@ void link_phy_handler(stk_msg_t* msg) {
         }
         break;
     
-    case SIG_LINK_PHY_GET_MSG_IN:
-        APP_PRINT("[LINK_PHY] FW_MSG_TASK_POST\n");
-        get_msg = (stk_msg_parser_t*)(&esplink_buffer_receive[1]);
+    case SIG_LINK_PHY_GET_MSG_RES:
+        APP_PRINT("[LINK_PHY] SIG_LINK_PHY_GET_MSG_RES\n");
+        get_msg = (stk_msg_parser_t*)(&link_phy_buffer_receive[2]);
         APP_PRINT("[LINK_PHY] Destination task id: %d\n", get_msg->des_task_id);
         APP_PRINT("[LINK_PHY] Signal: %d\n", get_msg->sig);
 
@@ -59,24 +62,41 @@ void link_phy_handler(stk_msg_t* msg) {
     }
 }
 
-void esplink_send_msg(uint8_t* buffer, uint8_t length) {
+void link_phy_send_data(uint8_t* buffer, uint8_t length) {
     for (uint8_t i = 0; i < length; i++) {
         usart2_put_char(buffer[i]);
     }
 }
 
+void link_phy_fw_msg(uint8_t des_task_id, uint8_t sig) {
+    link_phy_buffer_trans[0] = 0xFD;
+    link_phy_buffer_trans[1] = TASK_POST;
+    link_phy_buffer_trans[2] = des_task_id;
+    link_phy_buffer_trans[3] = sig;
+    link_phy_buffer_trans[4] = 0xFE;
+    link_phy_send_data(&link_phy_buffer_trans[0], 5);
+}
+
 void usart2_get_char(uint8_t c) {
 
     ENTRY_CRITICAL();
-    esplink_buffer_receive[index_receive] = c;
+    link_phy_buffer_receive[index_receive] = c;
     EXIT_CRITICAL();
 
-    if (c == 0xFE) {
-        index_receive = 0;
-        task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_GET_BUFF);
+    /* start transmission */
+    if (link_phy_buffer_receive[index_receive] == 0xFD) {
+        flag_start_transmiss = 1;
     }
-    else {
-        index_receive++;
+
+    /* end of transmission */
+    if (flag_start_transmiss) {
+        if (link_phy_buffer_receive[index_receive] == 0xFE) {
+            task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_GET_BUFF);
+            index_receive = 0;
+            flag_start_transmiss = 0;
+        }
+        else {
+            index_receive++;
+        }
     }
-    
 }
