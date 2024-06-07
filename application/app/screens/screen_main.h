@@ -28,11 +28,6 @@
 #define VELOCITY_SET_LEVEL_2                   (7000.0)
 #define VELOCITY_SET_LEVEL_3                   (9000.0)
 
-#define WIFI_DISCONNECTED                      (0x00)
-#define WIFI_CONNECTED                         (0x01)
-#define WIFI_RECONNECTING                      (0x02)
-#define WIFI_RECHANGING                        (0x03)
-
 typedef struct {
     uint8_t music_state;
     uint16_t music_volume;

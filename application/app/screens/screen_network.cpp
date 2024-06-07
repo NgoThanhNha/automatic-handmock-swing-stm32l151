@@ -15,6 +15,7 @@
 #include "console.h"
 #include "screen_manager.h"
 #include "view_render.h"
+#include "utils.h"
 
 #include "app.h"
 #include "task_list.h"
@@ -27,6 +28,9 @@
 screen_network_info_t screen_network_info;
 static void screen_network_init();
 static void screen_network_update();
+
+char ssid_display[30];
+char password_display[30];
 
 void screen_network_handler(stk_msg_t* msg) {
     switch (msg->sig) {
@@ -45,14 +49,14 @@ void screen_network_handler(stk_msg_t* msg) {
     case SIG_BUTTON_UP_PRESSED:
         APP_PRINT("[SCREEN] SIG_BUTTON_UP_PRESSED\n");
         task_post_pure_msg(TASK_SM_ID, SIG_SM_REQ_WIFI_RECONNECT);
-        main_screen_info.wifi_status = WIFI_RECONNECTING;
+        main_screen_info.wifi_status = WL_STATE_RECONNECTING;
         screen_network_update();
         break;
 
     case SIG_BUTTON_DOWN_PRESSED:
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
         task_post_pure_msg(TASK_SM_ID, SIG_SM_REQ_WIFI_RECHANGE);
-        main_screen_info.wifi_status = WIFI_RECHANGING;
+        main_screen_info.wifi_status = WL_STATE_RECHANGING;
         screen_network_update();
         break;
 
@@ -89,26 +93,31 @@ void screen_network_init() {
 
 void screen_network_update() {
     view_render_clear(&view_render_dynamic);
+
+    /* display wl info */
+    mem_cpy((char*)(&ssid_display[0]), (const char*)(&link_phy_wl_info.ssid[0]), 30);
+    mem_cpy((char*)(&password_display[0]), (const char*)(&link_phy_wl_info.password[0]), 30);
+    view_render_print_string(&view_render_dynamic, 100, 85, (const char*)(&ssid_display[0]), 2, CYAN_COLOR);
+    view_render_print_string(&view_render_dynamic, 150, 115, (const char*)(&password_display[0]), 2, CYAN_COLOR);
+    
     switch (main_screen_info.wifi_status) {
-    case WIFI_CONNECTED:
+    case WL_STATE_DISCONNECTED:
+        view_render_print_string(&view_render_dynamic, 175, 55, "Disconnected", 2, ORANGE_COLOR);
+        break; 
+
+    case WL_STATE_CONNECTED:
         view_render_print_string(&view_render_dynamic, 180, 55, "Connected", 2, GREEN_COLOR);
         break;
     
-    case WIFI_RECONNECTING:
+    case WL_STATE_RECONNECTING:
         view_render_print_string(&view_render_dynamic, 175, 55, "Reconnecting", 2, ORANGE_COLOR);
         break;
 
-    case WIFI_RECHANGING:
+    case WL_STATE_RECHANGING:
         view_render_print_string(&view_render_dynamic, 175, 55, "Rechanging", 2, YELLOW_COLOR);
-        break; 
-
-    case WIFI_DISCONNECTED:
-        view_render_print_string(&view_render_dynamic, 175, 55, "Disconnected", 2, ORANGE_COLOR);
         break; 
 
     default:
         break;
     }
-    view_render_print_string(&view_render_dynamic, 100, 85, (const char*)(&link_phy_wl_info.ssid[0]), 2, CYAN_COLOR);
-    view_render_print_string(&view_render_dynamic, 150, 115, (const char*)(&link_phy_wl_info.password[0]), 2, CYAN_COLOR);
 }

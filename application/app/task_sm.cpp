@@ -23,6 +23,7 @@
 #include "task_safety.h"
 
 #include "screen_main.h"
+#include "screen_network.h"
 
 void task_sm_handler(stk_msg_t* msg) {
     switch (msg->sig) {
@@ -48,12 +49,12 @@ void task_sm_handler(stk_msg_t* msg) {
 
     case SIG_SM_RES_WIFI_CONNECTED:
         APP_PRINT("[TASK_SM] SIG_SM_RES_WIFI_CONNECTED\n");
-        main_screen_info.wifi_status = WIFI_CONNECTED;
+        main_screen_info.wifi_status = WL_STATE_CONNECTED;
         break;
 
     case SIG_SM_RES_WIFI_DISCONNECTED:
         APP_PRINT("[TASK_SM] SIG_SM_RES_WIFI_DISCONNECTED\n");
-        main_screen_info.wifi_status = WIFI_DISCONNECTED;
+        main_screen_info.wifi_status = WL_STATE_DISCONNECTED;
         break;
 
     default:

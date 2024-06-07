@@ -65,7 +65,6 @@ void button_down_callback(void* _button) {
 
     case BUTTON_STATE_LONG_PRESSED:
         APP_PRINT("[BUTTON_CALLBACK] BUTTON_DOWN_LONG_PRESSED\n");
-        task_post_pure_msg(TASK_SM_ID, SIG_SM_REQ_WIFI_INFO);
         break;
 
     case BUTTON_STATE_RELEASED:

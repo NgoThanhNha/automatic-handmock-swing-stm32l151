@@ -17,6 +17,13 @@
 
 #include "message.h"
 
+enum wifi_status {
+    WL_STATE_DISCONNECTED = 0x01,
+    WL_STATE_CONNECTED,
+    WL_STATE_RECONNECTING,
+    WL_STATE_RECHANGING,
+};
+
 typedef struct {
     char wifi_ssid[30];
     char wifi_password[30];
