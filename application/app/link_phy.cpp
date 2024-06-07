@@ -13,6 +13,7 @@
 
 #include "io_cfg.h"
 #include "console.h"
+#include "utils.h"
 #include "platform.h"
 
 #include "app.h"
@@ -21,12 +22,15 @@
 #include "task_display.h"
 #include "task_safety.h"
 
+#include "screen_main.h"
+
 uint8_t link_phy_buffer_trans[LINK_PHY_UART_TRANS_BUFFER_SIZE];
 uint8_t link_phy_buffer_receive[LINK_PHY_UART_RECEIVE_BUFFER_SIZE];
 uint8_t index_receive = 0;
 uint8_t flag_start_transmiss;
 
-link_phy_fw_data_t esplink_fw_data;
+link_phy_fw_data_t link_phy_fw_data;
+link_phy_wl_info_t link_phy_wl_info;
 stk_msg_parser_t* get_msg = (stk_msg_parser_t*)0;
 
 void link_phy_handler(stk_msg_t* msg) {
@@ -36,10 +40,14 @@ void link_phy_handler(stk_msg_t* msg) {
         switch (link_phy_buffer_receive[1]) {
             case TASK_POST:
                 task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_GET_MSG_RES);
-            break;
+                break;
+
+            case SIG_SM_RES_WIFI_INFO:
+                task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_GET_WIFI_RES);
+                break;
 
             default:
-            break;
+                break;
         }
         break;
     
@@ -51,6 +59,23 @@ void link_phy_handler(stk_msg_t* msg) {
 
         /* dispatch msg */
         task_post_pure_msg(get_msg->des_task_id, get_msg->sig);
+        break;
+
+    case SIG_LINK_PHY_GET_WIFI_RES:
+        APP_PRINT("[LINK_PHY] SIG_LINK_PHY_GET_WIFI_RES\n");
+        /* get wl info */
+        link_phy_wl_info.wifi_status = link_phy_buffer_receive[2];
+        main_screen_info.wifi_status = link_phy_wl_info.wifi_status;
+        link_phy_wl_info.lenght_ssid = link_phy_buffer_receive[3];
+        link_phy_wl_info.length_password = link_phy_buffer_receive[4];
+        mem_cpy((uint8_t*)(&link_phy_wl_info.ssid[0]), (uint8_t*)&link_phy_buffer_receive[5], link_phy_wl_info.lenght_ssid);
+        mem_cpy((uint8_t*)(&link_phy_wl_info.password[0]), (uint8_t*)&link_phy_buffer_receive[5 + link_phy_wl_info.lenght_ssid], link_phy_wl_info.length_password);
+        APP_PRINT("[LINK_PHY] Wifi_Status: %d\n", link_phy_wl_info.wifi_status);
+        APP_PRINT("[LINK_PHY] Wifi_SSID: %s\n", link_phy_wl_info.ssid);
+        APP_PRINT("[LINK_PHY] Wifi_Password: %s\n", link_phy_wl_info.password);
+
+        /* update to screen */
+        task_post_pure_msg(TASK_DISPLAY_ID, SIG_SCREEN_UPDATE);
         break;
 
     case SIG_LINK_PHY_SEND_DATA:

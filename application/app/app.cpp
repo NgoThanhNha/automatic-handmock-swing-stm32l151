@@ -40,6 +40,7 @@
 #include "screen_info.h"
 #include "screen_main.h"
 #include "screen_setting.h"
+#include "screen_network.h"
 
 #include "stm32l1xx_tim.h"
 
@@ -72,7 +73,7 @@ void main_app() {
     view_render_init(VERTICAL);
 
     /* screen manager init */
-    scr_mng_init(&app_screen, screen_main_handler);
+    scr_mng_init(&app_screen, screen_network_handler);
 
     /* power sensing init */
     ina219_init();

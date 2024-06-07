@@ -21,13 +21,14 @@
 #include "task_display.h"
 
 #include "screen_main.h"
+#include "screen_network.h"
 
 #include <math.h>
 
 static void view_screen_setting_init();
 static void view_screen_setting_update();
 
-screen_setting_info_t screen_setting;
+screen_setting_info_t screen_setting_info;
 
 void screen_setting_handler(stk_msg_t* msg) {
     switch (msg->sig) {
@@ -39,9 +40,9 @@ void screen_setting_handler(stk_msg_t* msg) {
     
     case SIG_BUTTON_UP_PRESSED:
         APP_PRINT("[SCREEN] SIG_BUTTON_UP_PRESSED\n");
-        screen_setting.cursor_select++;
-        if (screen_setting.cursor_select == 4) {
-            screen_setting.cursor_select = 0;
+        screen_setting_info.cursor_select++;
+        if (screen_setting_info.cursor_select == 4) {
+            screen_setting_info.cursor_select = 0;
         }
         /* view screen update */
         view_screen_setting_update();
@@ -49,20 +50,22 @@ void screen_setting_handler(stk_msg_t* msg) {
 
     case SIG_BUTTON_DOWN_PRESSED:
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
-        if (screen_setting.cursor_select == 0) {
-            screen_setting.cursor_select = 3;
+        if (screen_setting_info.cursor_select == 0) {
+            screen_setting_info.cursor_select = 3;
         }
         else {
-            screen_setting.cursor_select--;
+            screen_setting_info.cursor_select--;
         }
         /* view screen update */
         view_screen_setting_update();
         break;
 
     case SIG_BUTTON_MODE_PRESSED:;
-        switch (screen_setting.cursor_select) {
+        switch (screen_setting_info.cursor_select) {
         case 0:
-            /* TO DO code */
+            screen_setting_info.cursor_select = 0;
+            view_render_force_clear();
+            SCREEN_TRANS(&screen_network_handler);
             break;
 
         case 1:
@@ -74,18 +77,14 @@ void screen_setting_handler(stk_msg_t* msg) {
             break;
 
         case 3:
-            task_post_pure_msg(TASK_DISPLAY_ID, SIG_SCREEN_TRANS);
+            screen_setting_info.cursor_select = 0;
+            view_render_force_clear();
+            SCREEN_TRANS(&screen_main_handler);
             break;
         
         default:
             break;
         }
-        break;
-
-    case SIG_SCREEN_TRANS:
-        screen_setting.cursor_select = 0;
-        view_render_force_clear();
-        SCREEN_TRANS(&screen_main_handler);
         break;
 
     default:
@@ -98,8 +97,8 @@ void view_screen_setting_init() {
     view_render_print_string(&view_render_static, 20, 12, "SETTING", 2, BLACK_COLOR);
 
     /* draw frame */
+    view_render_draw_line(&view_render_static, 10, 40, 310, 40, WHITE_COLOR);
     view_render_draw_line(&view_render_static, 10, 41, 310, 41, WHITE_COLOR);
-    view_render_draw_line(&view_render_static, 10, 42, 310, 42, WHITE_COLOR);
     view_render_draw_line(&view_render_dynamic, 310, 47, 310, 170, WHITE_COLOR);
 
     /* draw text */
@@ -114,7 +113,7 @@ void view_screen_setting_update() {
     view_render_draw_line(&view_render_dynamic, 310, 47, 310, 170, WHITE_COLOR);
 
     /* view cursor */
-    switch (screen_setting.cursor_select){
+    switch (screen_setting_info.cursor_select){
     case 0:
         view_render_draw_rect(&view_render_dynamic, 10, 47, 250, 30, CYAN_COLOR);
         view_render_fill_rect(&view_render_dynamic, 307, 47, 6, 20, WHITE_COLOR);
@@ -132,7 +131,7 @@ void view_screen_setting_update() {
 
     case 3:
         view_render_draw_rect(&view_render_dynamic, 10, 137, 250, 30, CYAN_COLOR);
-        view_render_fill_rect(&view_render_dynamic, 307, 148, 6, 20, WHITE_COLOR);
+        view_render_fill_rect(&view_render_dynamic, 307, 146, 6, 20, WHITE_COLOR);
         break;
     
     default:

@@ -38,14 +38,23 @@ typedef struct {
     uint8_t weight;
 } link_phy_fw_data_t;
 
+typedef struct {
+    uint8_t wifi_status;
+    uint8_t lenght_ssid;
+    uint8_t length_password;
+    char ssid[30];
+    char password[30];
+} link_phy_wl_info_t;
+
 /* type of function call by link phy */
 typedef enum {
     TASK_POST = 0x01,
-    SEND_DATA,
+    SEND_TO_PARSER_DATA,
 } link_dect_t;
 
 extern uint8_t link_phy_buffer_trans[LINK_PHY_UART_TRANS_BUFFER_SIZE];
 extern uint8_t link_phy_buffer_receive[LINK_PHY_UART_RECEIVE_BUFFER_SIZE];
+extern link_phy_wl_info_t link_phy_wl_info;
 
 /* get data usart irq */
 extern void usart2_get_char(uint8_t c);

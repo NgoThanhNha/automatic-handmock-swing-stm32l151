@@ -32,10 +32,10 @@ void screen_idle_handler(stk_msg_t* msg) {
         APP_PRINT("[SCREEN] SCREEN_IDLE_ENTRY\n");
         ball_idle_init();
         view_screen_idle_update();
-        timer_set(TASK_DISPLAY_ID, SIG_DISPLAY_IDLE_SCREEN_UPDATE, 40, TIMER_PERIODIC);
+        timer_set(TASK_DISPLAY_ID, SIG_SCREEN_UPDATE, 40, TIMER_PERIODIC);
         break;
 
-    case SIG_DISPLAY_IDLE_SCREEN_UPDATE:
+    case SIG_SCREEN_UPDATE:
         ENTRY_CRITICAL();
         view_screen_idle_update();
         EXIT_CRITICAL();
