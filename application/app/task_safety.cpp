@@ -30,7 +30,7 @@ void polling_checking_current();
 
 void task_safety_handler(stk_msg_t* msg) {
     switch (msg->sig) {
-    case SIG_CHECK_MOTOR_CURRENT:
+    case SIG_CHECK_MOTOR_POWER:
         if (safety.motor_current < CURRENT_NOLOAD) {
             safety.check_noload++;
             if (safety.check_noload == NOLOAD_TIME_STOP) {
@@ -69,13 +69,20 @@ void task_safety_handler(stk_msg_t* msg) {
 void polling_checking_current() {
     static uint16_t polling_counter;
     if (polling_get_current_state == POLLING_GET_CURRENT_ENABLE) {
-        if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
-            polling_counter = 0;
+        switch (polling_counter) {
+        case GET_CURRENT_POLLING_PERIOD:
             safety.motor_current = ina219_read_current();
-            task_post_pure_msg(TASK_SAFETY_ID, SIG_CHECK_MOTOR_CURRENT);
+            break;
+        
+        case GET_VOLTAGE_POLLING_PERIOD:
+            polling_counter = 0;
+            safety.bus_voltage = ina219_read_bus_voltage();
+            // task_post_pure_msg(TASK_SAFETY_ID, SIG_CHECK_MOTOR_POWER);
+            break;
+
+        default:
+            break;
         }
-        else {
-            polling_counter++;
-        }
+        polling_counter++;
     }
 }

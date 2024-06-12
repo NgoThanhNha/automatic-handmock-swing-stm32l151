@@ -53,14 +53,14 @@ static const tone_t tone_startup[] = {
 };
 
 static const tone_t tone_1beep[] = {
-	{1500, 3}
+	{2000, 2}
 };
 
 static const tone_t tone_3beep[] = {
 	{4000, 3},
-	{   0,10},
+	{   0,4},
 	{1000, 6},
-	{   0,10},
+	{   0,4},
 	{4000, 3},
 	{   0, 0}
 };

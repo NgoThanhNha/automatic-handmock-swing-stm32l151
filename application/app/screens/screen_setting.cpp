@@ -13,6 +13,8 @@
 
 #include "platform.h"
 #include "console.h"
+#include "button.h"
+#include "buzzer.h"
 #include "screen_manager.h"
 #include "view_render.h"
 
@@ -22,6 +24,7 @@
 
 #include "screen_main.h"
 #include "screen_network.h"
+#include "screen_power.h"
 
 #include <math.h>
 
@@ -37,18 +40,8 @@ void screen_setting_handler(stk_msg_t* msg) {
         view_screen_setting_init();
         view_screen_setting_update();
         break;
-    
-    case SIG_BUTTON_UP_PRESSED:
-        APP_PRINT("[SCREEN] SIG_BUTTON_UP_PRESSED\n");
-        screen_setting_info.cursor_select++;
-        if (screen_setting_info.cursor_select == 4) {
-            screen_setting_info.cursor_select = 0;
-        }
-        /* view screen update */
-        view_screen_setting_update();
-        break;
 
-    case SIG_BUTTON_DOWN_PRESSED:
+    case SIG_BUTTON_UP_PRESSED:
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
         if (screen_setting_info.cursor_select == 0) {
             screen_setting_info.cursor_select = 3;
@@ -60,7 +53,17 @@ void screen_setting_handler(stk_msg_t* msg) {
         view_screen_setting_update();
         break;
 
-    case SIG_BUTTON_MODE_PRESSED:;
+    case SIG_BUTTON_DOWN_PRESSED:
+        APP_PRINT("[SCREEN] SIG_BUTTON_UP_PRESSED\n");
+        screen_setting_info.cursor_select++;
+        if (screen_setting_info.cursor_select == 4) {
+            screen_setting_info.cursor_select = 0;
+        }
+        /* view screen update */
+        view_screen_setting_update();
+        break;
+
+    case SIG_BUTTON_MODE_PRESSED:
         switch (screen_setting_info.cursor_select) {
         case 0:
             screen_setting_info.cursor_select = 0;
@@ -69,7 +72,9 @@ void screen_setting_handler(stk_msg_t* msg) {
             break;
 
         case 1:
-            /* TO DO code */
+            screen_setting_info.cursor_select = 0;
+            view_render_force_clear();
+            SCREEN_TRANS(&screen_power_handler);
             break;
 
         case 2:

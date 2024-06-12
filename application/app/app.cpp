@@ -73,7 +73,7 @@ void main_app() {
     view_render_init(VERTICAL);
 
     /* screen manager init */
-    scr_mng_init(&app_screen, screen_network_handler);
+    scr_mng_init(&app_screen, screen_main_handler);
 
     /* power sensing init */
     ina219_init();
@@ -84,6 +84,7 @@ void main_app() {
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
     timer_set(TASK_PID_ID, SIG_PID_RUN, PID_INTERVAL, TIMER_PERIODIC);
+    timer_set(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS, 60000, TIMER_PERIODIC);
 
     /* kernel start */
     task_run();

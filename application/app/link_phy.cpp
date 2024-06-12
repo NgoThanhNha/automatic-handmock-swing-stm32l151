@@ -33,6 +33,8 @@ link_phy_fw_data_t link_phy_fw_data;
 link_phy_wl_info_t link_phy_wl_info;
 stk_msg_parser_t* get_msg = (stk_msg_parser_t*)0;
 
+static void link_phy_fw_machine_data(uint8_t voltage, uint8_t current, uint8_t speed_level, uint8_t weight);
+
 void link_phy_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_LINK_PHY_GET_BUFF:
@@ -79,7 +81,12 @@ void link_phy_handler(stk_msg_t* msg) {
         break;
 
     case SIG_LINK_PHY_SEND_DATA:
-        APP_PRINT("[LINK_PHY] SIG_LINK_PHY_SEND_DATA\n");
+        APP_PRINT("[LINK_PHY] SIG_LINK_PHY_SEND_DATA_OUT\n");
+        link_phy_fw_machine_data((uint8_t)(safety.bus_voltage), (uint8_t)((safety.motor_current / 10.0)), (main_screen_info.speed), (main_screen_info.weight));
+        APP_PRINT("[LINK_PHY] Voltage: %d\n", (uint8_t)(safety.bus_voltage));
+        APP_PRINT("[LINK_PHY] Current: %d\n", (uint8_t)((safety.motor_current / 10.0)));
+        APP_PRINT("[LINK_PHY] Speed: %d\n", (main_screen_info.speed));
+        APP_PRINT("[LINK_PHY] Weight: %d\n", (main_screen_info.weight));
         break;
 
     default:
@@ -100,6 +107,17 @@ void link_phy_fw_msg(uint8_t des_task_id, uint8_t sig) {
     link_phy_buffer_trans[3] = sig;
     link_phy_buffer_trans[4] = 0xFE;
     link_phy_send_data(&link_phy_buffer_trans[0], 5);
+}
+
+void link_phy_fw_machine_data(uint8_t voltage, uint8_t current, uint8_t speed_level, uint8_t weight) {
+    link_phy_buffer_trans[0] = 0xFD;
+    link_phy_buffer_trans[1] = SEND_TO_PARSER_DATA;
+    link_phy_buffer_trans[2] = voltage;
+    link_phy_buffer_trans[3] = current;
+    link_phy_buffer_trans[4] = speed_level;
+    link_phy_buffer_trans[5] = weight;
+    link_phy_buffer_trans[6] = 0xFE;
+    link_phy_send_data(&link_phy_buffer_trans[0], 7);
 }
 
 void usart2_get_char(uint8_t c) {

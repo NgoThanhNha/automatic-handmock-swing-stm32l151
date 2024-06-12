@@ -50,11 +50,13 @@ void task_sm_handler(stk_msg_t* msg) {
     case SIG_SM_RES_WIFI_CONNECTED:
         APP_PRINT("[TASK_SM] SIG_SM_RES_WIFI_CONNECTED\n");
         main_screen_info.wifi_status = WL_STATE_CONNECTED;
+        task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_SEND_DATA);
         break;
 
     case SIG_SM_RES_WIFI_DISCONNECTED:
         APP_PRINT("[TASK_SM] SIG_SM_RES_WIFI_DISCONNECTED\n");
         main_screen_info.wifi_status = WL_STATE_DISCONNECTED;
+        LINK_PHY_FORWARD_MSG_OUT(TASK_SM_ID, SIG_SM_REQ_WIFI_RECONNECT);
         break;
 
     default:

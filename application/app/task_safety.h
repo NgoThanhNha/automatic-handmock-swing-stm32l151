@@ -25,13 +25,16 @@
 #define POLLING_GET_CURRENT_DISABLE         (0x00)
 #define POLLING_GET_CURRENT_ENABLE          (0x01)
 #define GET_CURRENT_POLLING_PERIOD          (1000)
+#define GET_VOLTAGE_POLLING_PERIOD          (1500)
 
 typedef struct {
+    float bus_voltage;
     float motor_current;
     uint8_t check_noload;
     uint8_t check_overload;
 } safety_attr_t;
 
+extern safety_attr_t safety;
 extern void task_safety_handler(stk_msg_t* msg);
 extern void polling_checking_current();
 

@@ -65,6 +65,7 @@ void button_down_callback(void* _button) {
 
     case BUTTON_STATE_LONG_PRESSED:
         APP_PRINT("[BUTTON_CALLBACK] BUTTON_DOWN_LONG_PRESSED\n");
+        task_post_pure_msg(LINK_PHY_ID, SIG_LINK_PHY_SEND_DATA);
         break;
 
     case BUTTON_STATE_RELEASED:

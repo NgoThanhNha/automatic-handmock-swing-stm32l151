@@ -33,7 +33,7 @@ typedef struct {
 /* data attribute of msg */
 typedef struct {
     uint8_t voltage;
-    uint8_t current;
+    uint16_t current;
     uint8_t speed_level;
     uint8_t weight;
 } link_phy_fw_data_t;
@@ -55,6 +55,7 @@ typedef enum {
 extern uint8_t link_phy_buffer_trans[LINK_PHY_UART_TRANS_BUFFER_SIZE];
 extern uint8_t link_phy_buffer_receive[LINK_PHY_UART_RECEIVE_BUFFER_SIZE];
 extern link_phy_wl_info_t link_phy_wl_info;
+extern link_phy_fw_data_t link_phy_fw_data;
 
 /* get data usart irq */
 extern void usart2_get_char(uint8_t c);
