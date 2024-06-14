@@ -17,9 +17,11 @@
 #include <stdbool.h>
 
 extern void dfplayer_init();
-extern void dfplayer_play(uint16_t num);
+extern void dfplayer_play();
+extern void dfplayer_play_track(uint16_t num);
+extern void dfplayer_play_next();
+extern void dfplayer_play_prev();
 extern void dfplayer_set_volume(uint16_t volume);
-extern void dfplayer_play_continous();
 extern void dfplayer_pause();
 extern void dfplayer_stop();
 

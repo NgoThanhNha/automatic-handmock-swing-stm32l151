@@ -25,6 +25,7 @@
 #include "screen_main.h"
 #include "screen_network.h"
 #include "screen_power.h"
+#include "screen_track.h"
 
 #include <math.h>
 
@@ -78,7 +79,9 @@ void screen_setting_handler(stk_msg_t* msg) {
             break;
 
         case 2:
-            /* TO DO code */
+            screen_setting_info.cursor_select = 0;
+            view_render_force_clear();
+            SCREEN_TRANS(&screen_track_handler);
             break;
 
         case 3:

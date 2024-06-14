@@ -65,17 +65,17 @@ void view_screen_power_init() {
     view_render_draw_line(&view_render_static, 10, 40, 310, 40, WHITE_COLOR);
     view_render_draw_line(&view_render_static, 10, 41, 310, 41, WHITE_COLOR);
 
-    view_render_print_string(&view_render_static, 30, 65, "Voltage: ", 2, WHITE_COLOR);
-    view_render_print_string(&view_render_static, 210, 65, "V", 2, WHITE_COLOR);
-    view_render_print_float(&view_render_dynamic, 130, 65, (ina219_read_bus_voltage()) , 2, GREEN_COLOR);
-    view_render_print_string(&view_render_static, 30, 100, "Current: ", 2, WHITE_COLOR);
-    view_render_print_string(&view_render_static, 210, 100, "mA", 2, WHITE_COLOR);
-    view_render_print_float(&view_render_dynamic, 130, 100, (ina219_read_current()), 2, YELLOW_COLOR);
+    view_render_print_string(&view_render_static, 50, 65, "Voltage: ", 2, WHITE_COLOR);
+    view_render_print_string(&view_render_static, 230, 65, "V", 2, WHITE_COLOR);
+    view_render_print_float(&view_render_dynamic, 150, 65, (ina219_read_bus_voltage()) , 2, GREEN_COLOR);
+    view_render_print_string(&view_render_static, 50, 100, "Current: ", 2, WHITE_COLOR);
+    view_render_print_string(&view_render_static, 230, 100, "mA", 2, WHITE_COLOR);
+    view_render_print_float(&view_render_dynamic, 150, 100, (ina219_read_current()), 2, YELLOW_COLOR);
     view_render_print_string(&view_render_static, 260, 150, "Back", 2, GRAY_COLOR);
 }
 
 void view_screen_power_update() {
     view_render_clear(&view_render_dynamic);
-    view_render_print_float(&view_render_dynamic, 130, 65, (ina219_read_bus_voltage()) , 2, GREEN_COLOR);
-    view_render_print_float(&view_render_dynamic, 130, 100, (ina219_read_current()), 2, YELLOW_COLOR);
+    view_render_print_float(&view_render_dynamic, 150, 65, (ina219_read_bus_voltage()) , 2, GREEN_COLOR);
+    view_render_print_float(&view_render_dynamic, 150, 100, (ina219_read_current()), 2, YELLOW_COLOR);
 }

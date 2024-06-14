@@ -111,10 +111,12 @@ void screen_main_handler(stk_msg_t* msg) {
 
     case SIG_BUTTON_MODE_LONG_PRESSED:
         if (main_screen_info.music_state == MAIN_INFO_MUSIC_OFF) {
-        main_screen_info.music_state = MAIN_INFO_MUSIC_ON;
+            main_screen_info.music_state = MAIN_INFO_MUSIC_ON;
+            dfplayer_play();
         }
         else if (main_screen_info.music_state == MAIN_INFO_MUSIC_ON) {
-        main_screen_info.music_state = MAIN_INFO_MUSIC_OFF;
+            main_screen_info.music_state = MAIN_INFO_MUSIC_OFF;
+            dfplayer_stop();
         }
         /* update screen */
         view_screen_main_update();
@@ -177,12 +179,10 @@ void view_screen_main_update() {
     switch (main_screen_info.music_state) {
     case MAIN_INFO_MUSIC_ON:
         view_render_print_string(&view_render_dynamic, 200, 52, "Play", 2, GREEN_COLOR);
-        dfplayer_play_continous();
         break;
 
     case MAIN_INFO_MUSIC_OFF:
         view_render_print_string(&view_render_dynamic, 200, 52, "Stop", 2, ORANGE_COLOR);
-        dfplayer_stop();
         break;
     
     default:

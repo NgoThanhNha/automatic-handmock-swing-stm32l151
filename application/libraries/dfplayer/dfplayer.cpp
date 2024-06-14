@@ -62,7 +62,7 @@ void dfplayer_send_cmd(uint8_t cmd) {
 	dfplayer_send_cmd(cmd, 0, 0);
 }
 
-void dfplayer_play(uint16_t track) {
+void dfplayer_play_track(uint16_t track) {
 	dfplayer_send_cmd(0x03, (uint8_t)(track >> 8), (uint8_t)(track));
 }
 
@@ -74,10 +74,18 @@ void dfplayer_pause() {
 	dfplayer_send_cmd(0x0E);
 }
 
-void dfplayer_play_continous() {
+void dfplayer_play() {
 	dfplayer_send_cmd(0x0d);
 }
 
 void dfplayer_set_volume(uint16_t volume) {
 	dfplayer_send_cmd(0x06, volume);
+}
+
+void dfplayer_play_next() {
+	dfplayer_send_cmd(0x01);
+}
+
+void dfplayer_play_prev() {
+	dfplayer_send_cmd(0x02);
 }

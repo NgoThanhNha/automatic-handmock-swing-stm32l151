@@ -11,3 +11,4 @@ SOURCES_CPP += ./app/screens/screen_main.cpp
 SOURCES_CPP += ./app/screens/screen_setting.cpp
 SOURCES_CPP += ./app/screens/screen_network.cpp
 SOURCES_CPP += ./app/screens/screen_power.cpp
+SOURCES_CPP += ./app/screens/screen_track.cpp
