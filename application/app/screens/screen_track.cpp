@@ -15,6 +15,7 @@
 #include "console.h"
 #include "button.h"
 #include "screen_manager.h"
+#include "hard_timer.h"
 #include "view_render.h"
 
 #include "bitmaps.h"
@@ -37,6 +38,7 @@ static void view_screen_track_update();
 static void view_icon_select(int16_t x0, int16_t y0);
 
 uint8_t screen_track_cursor;
+screen_track_info_t screen_track_info;
 
 void screen_track_handler(stk_msg_t* msg) {
     switch (msg->sig) {
@@ -59,17 +61,15 @@ void screen_track_handler(stk_msg_t* msg) {
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
         switch (screen_track_cursor) {
         case 0:
-            if (main_screen_info.music_state == MAIN_INFO_MUSIC_ON) {
-                main_screen_info.music_state = MAIN_INFO_MUSIC_OFF;
-                dfplayer_stop();
-            }
+            screen_track_info.music_status = MUSIC_OFF;
+            dfplayer_stop();
             break;
         
         case 1:
-            if (main_screen_info.music_volume != 0) {
-                main_screen_info.music_volume -= 5;
+            if (screen_track_info.volume != 0) {
+                screen_track_info.volume -= 5;
             }
-            dfplayer_set_volume(main_screen_info.music_volume);
+            dfplayer_set_volume(screen_track_info.volume);
             break;
 
         case 2:
@@ -88,18 +88,20 @@ void screen_track_handler(stk_msg_t* msg) {
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
         switch (screen_track_cursor) {
         case 0:
-            if (main_screen_info.music_state == MAIN_INFO_MUSIC_OFF) {
-                main_screen_info.music_state = MAIN_INFO_MUSIC_ON;
-                dfplayer_play();
-            }
+            screen_track_info.music_status = MUSIC_ON;
+            dfplayer_play();
+            delay_ms(3);
+            dfplayer_set_volume(screen_track_info.volume);
+            delay_ms(3);
+            dfplayer_disable_loop();
             break;
         
         case 1:
-            main_screen_info.music_volume += 5;
-            if (main_screen_info.music_volume == 31) {
-                main_screen_info.music_volume = 31;
+            screen_track_info.volume += 5;
+            if (screen_track_info.volume >= 30) {
+                screen_track_info.volume = 30;
             }
-            dfplayer_set_volume(main_screen_info.music_volume);
+            dfplayer_set_volume(screen_track_info.volume);
             break;
 
         case 2:
@@ -118,6 +120,14 @@ void screen_track_handler(stk_msg_t* msg) {
         view_screen_track_update();
         break;
 
+    case SIG_BUTTON_MODE_LONG_PRESSED:
+        screen_track_info.music_status = MUSIC_LOOP;
+        dfplayer_play();
+        delay_ms(3);
+        dfplayer_enable_loop();
+        view_screen_track_update();
+        break;
+
     case SIG_SCREEN_TRANS:
         screen_track_cursor = 0;
         view_render_force_clear();
@@ -132,43 +142,59 @@ void view_screen_track_init() {
     view_render_print_string(&view_render_static, 20, 12, "TRACK", 2, BLACK_COLOR);
     view_render_draw_line(&view_render_static, 10, 40, 310, 40, WHITE_COLOR);
     view_render_draw_line(&view_render_static, 10, 41, 310, 41, WHITE_COLOR);
-    view_render_print_string(&view_render_static, 260, 150, "Back", 2, GRAY_COLOR);
 
     /* draw icon */
-    view_render_draw_bitmap(&view_render_static, 140, 50, 50, 47, (uint16_t*)big_music_icon);
+    view_render_draw_bitmap(&view_render_static, 30, 75, 80, 84, (uint16_t*)big_music_icon);
 
     /* draw volume */
-    view_render_print_string(&view_render_static, 40, 110, "Volume:", 2, CYAN_COLOR);
-    view_render_print_integer(&view_render_dynamic, 140, 110, main_screen_info.music_volume, 2, GREEN_COLOR);
-    view_render_print_string(&view_render_static, 40, 140, "Track:", 2, WHITE_COLOR);
-    view_render_print_string(&view_render_static, 120, 140, "< >", 2, YELLOW_COLOR);
+    view_render_print_string(&view_render_static, 150, 60, "Status:", 2, WHITE_COLOR);
+    view_render_print_string(&view_render_static, 150, 90, "Volume:", 2, ORANGE_COLOR);
+    view_render_print_string(&view_render_static, 150, 120, "Track: << >>", 2, CYAN_COLOR);
+    view_render_print_string(&view_render_static, 150, 150, "Back", 2, GRAY_COLOR);
 }
 
 void view_screen_track_update() {
     view_render_clear(&view_render_dynamic);
     switch (screen_track_cursor) {
     case 0:
-        view_icon_select(120, 65);
+        view_icon_select(130, 55);
         break;
     
     case 1:
-        view_icon_select(18, 105);
+        view_icon_select(130, 85);
         break;
 
     case 2:
-        view_icon_select(18, 135);
+        view_icon_select(130, 115);
         break;
 
     case 3:
-        view_icon_select(240, 145);
+        view_icon_select(130, 145);
         break;
 
     default:
         break;
     }
 
-    /* update volume & track */
-    view_render_print_integer(&view_render_dynamic, 140, 110, main_screen_info.music_volume, 2, GREEN_COLOR);
+    switch (screen_track_info.music_status) {
+    case MUSIC_ON:
+        view_render_print_string(&view_render_dynamic, 250, 60, "Play", 2, YELLOW_COLOR);
+        break;
+    
+    case MUSIC_OFF:
+        view_render_print_string(&view_render_dynamic, 250, 60, "Stop", 2, YELLOW_COLOR);
+        break;
+
+    case MUSIC_LOOP:
+        view_render_print_string(&view_render_dynamic, 250, 60, "Loop", 2, YELLOW_COLOR);
+        break;
+
+    default:
+        break;
+    }
+
+    /* update volume */
+    view_render_print_integer(&view_render_dynamic, 250, 90, screen_track_info.volume, 2, GREEN_COLOR);
 }
 
 void view_icon_select(int16_t x0, int16_t y0) {

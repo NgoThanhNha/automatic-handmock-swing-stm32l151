@@ -24,8 +24,14 @@
 
 #define POLLING_GET_CURRENT_DISABLE         (0x00)
 #define POLLING_GET_CURRENT_ENABLE          (0x01)
-#define GET_CURRENT_POLLING_PERIOD          (1000)
-#define GET_VOLTAGE_POLLING_PERIOD          (1500)
+#define GET_CURRENT_POLLING_PERIOD          (100)
+#define GET_VOLTAGE_POLLING_PERIOD          (150)
+
+/* DEFINE FOR ESTIMATE MASS */
+#define K_T                                 (1.0527)
+#define ESTIMATE_CURRENT_NOLOAD             (0.13)
+#define SHAFT_RADIUS                        (0.003)   
+#define g                                   (9.81)
 
 typedef struct {
     float bus_voltage;

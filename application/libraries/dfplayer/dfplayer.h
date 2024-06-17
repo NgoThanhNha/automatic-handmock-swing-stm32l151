@@ -22,6 +22,8 @@ extern void dfplayer_play_track(uint16_t num);
 extern void dfplayer_play_next();
 extern void dfplayer_play_prev();
 extern void dfplayer_set_volume(uint16_t volume);
+extern void dfplayer_enable_loop();
+extern void dfplayer_disable_loop();
 extern void dfplayer_pause();
 extern void dfplayer_stop();
 

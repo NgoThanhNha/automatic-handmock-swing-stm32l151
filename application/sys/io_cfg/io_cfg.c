@@ -275,7 +275,7 @@ DMA_InitTypeDef DMA_TX_InitStructure;
 void dma_init() {
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-	DMA_TX_InitStructure.DMA_BufferSize = 0; //default
+	DMA_TX_InitStructure.DMA_BufferSize = 170 * 320; //default
 	DMA_TX_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
 	DMA_TX_InitStructure.DMA_M2M = DMA_M2M_Disable;
 	DMA_TX_InitStructure.DMA_MemoryBaseAddr = 0;

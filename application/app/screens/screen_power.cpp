@@ -76,6 +76,6 @@ void view_screen_power_init() {
 
 void view_screen_power_update() {
     view_render_clear(&view_render_dynamic);
-    view_render_print_float(&view_render_dynamic, 150, 65, (ina219_read_bus_voltage()) , 2, GREEN_COLOR);
-    view_render_print_float(&view_render_dynamic, 150, 100, (ina219_read_current()), 2, YELLOW_COLOR);
+    view_render_print_float(&view_render_dynamic, 150, 65, safety.bus_voltage, 2, GREEN_COLOR);
+    view_render_print_float(&view_render_dynamic, 150, 100, safety.motor_current, 2, YELLOW_COLOR);
 }

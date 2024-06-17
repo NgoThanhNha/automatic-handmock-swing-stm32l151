@@ -22,6 +22,7 @@
 
 #include "app.h"
 #include "task_list.h"
+#include "screen_main.h"
 
 uint16_t get_encoder_counter;
 uint32_t pwm_to_motor;
@@ -36,17 +37,15 @@ static uint32_t pid_run(float velocity_set);
 void task_pid_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_PID_INIT:
-        pid_attribute.kp = 0.88498747483835;
-        pid_attribute.kd = 0.00193091246061319;
-        pid_attribute.ki = 0.5;
-        pid_attribute.velocity_set = 10000;
+        pid_attribute.kp = 0.02567;
+        pid_attribute.kd = 0.0000867;
+        pid_attribute.ki = 0.5007;
+        pid_attribute.velocity_set = VELOCITY_SET_LEVEL_2;
+        main_screen_info.speed = MAIN_INFO_MOTOR_SPEED_LEVEL_2;
         pid_attribute.current_velocity = 0;
         pid_attribute.prev_error = 0;
         pid_attribute.prev_ui = 0;
         pid_attribute.sampling_time = (PID_INTERVAL) / 1000.0;
-        break;
-
-    case SIG_VELOCITY_CALCULATE:
         break;
 
     case SIG_PID_RUN:
@@ -63,6 +62,7 @@ void task_pid_handler(stk_msg_t* msg) {
         break;
 
     case SIG_PRINT_VELOCITY:
+        APP_DBG("Current motor speed: %.2f\n", pid_attribute.current_velocity);
         break;
     
     default:

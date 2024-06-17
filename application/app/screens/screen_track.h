@@ -17,6 +17,16 @@
 
 #include "message.h"
 
+#define MUSIC_OFF               (0x00)
+#define MUSIC_ON                (0x01)
+#define MUSIC_LOOP              (0x02)
+
+typedef struct {
+    uint8_t music_status;
+    uint8_t volume;
+} screen_track_info_t;
+
+extern screen_track_info_t screen_track_info;
 extern void screen_track_handler(stk_msg_t* msg);
 
 #ifdef __cplusplus

@@ -89,3 +89,11 @@ void dfplayer_play_next() {
 void dfplayer_play_prev() {
 	dfplayer_send_cmd(0x02);
 }
+
+void dfplayer_enable_loop() {
+  	dfplayer_send_cmd(0x11, 0x01);
+}
+
+void dfplayer_disable_loop() {
+  	dfplayer_send_cmd(0x11, 0x00);
+}

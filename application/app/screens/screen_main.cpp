@@ -15,6 +15,7 @@
 #include "console.h"
 #include "button.h"
 #include "screen_manager.h"
+#include "hard_timer.h"
 #include "view_render.h"
 
 #include "bitmaps.h"
@@ -27,6 +28,7 @@
 #include "task_pid.h"
 
 #include "screen_setting.h"
+#include "screen_track.h"
 
 static void view_screen_main_update();
 static void view_screen_main_init();
@@ -37,9 +39,9 @@ void screen_main_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SCREEN_ENTRY:
         APP_PRINT("[SCREEN] SCREEN_MAIN_ENTRY\n");
-        main_screen_info.music_volume = 20;
         view_screen_main_init();
         view_screen_main_update();
+        timer_set(TASK_DISPLAY_ID, SIG_SCREEN_UPDATE, 10000, TIMER_PERIODIC);
         break;
 
     case SIG_BUTTON_UP_PRESSED:
@@ -56,15 +58,15 @@ void screen_main_handler(stk_msg_t* msg) {
         APP_PRINT("[SCREEN] SIG_BUTTON_DOWN_PRESSED\n");
         switch (main_screen_info.cursor_select) {
         case 0:
-            if (main_screen_info.music_volume != 0) {
-                main_screen_info.music_volume -= 5;
+            if (screen_track_info.volume != 0) {
+                screen_track_info.volume -= 5;
             }
-            dfplayer_set_volume(main_screen_info.music_volume);
+            dfplayer_set_volume(screen_track_info.volume);
             break;
 
         case 1:
-            if (main_screen_info.speed == 0) {
-                main_screen_info.speed = 2;
+            if (main_screen_info.speed == 1) {
+                main_screen_info.speed = 3;
             }
             else {
                 main_screen_info.speed--;
@@ -83,17 +85,17 @@ void screen_main_handler(stk_msg_t* msg) {
         APP_PRINT("[SCREEN] SIG_BUTTON_MODE_PRESSED\n");
         switch (main_screen_info.cursor_select) {
         case 0:
-            main_screen_info.music_volume += 5;
-            if (main_screen_info.music_volume == 31) {
-                main_screen_info.music_volume = 31;
+            screen_track_info.volume += 5;
+            if (screen_track_info.volume >= 30) {
+                screen_track_info.volume = 30;
             }
-            dfplayer_set_volume(main_screen_info.music_volume);
+            dfplayer_set_volume(screen_track_info.volume);
             break;
 
         case 1:
             main_screen_info.speed++;
-            if (main_screen_info.speed == 3) {
-                main_screen_info.speed = 0;
+            if (main_screen_info.speed == 4) {
+                main_screen_info.speed = 1;
             }
             break;
 
@@ -110,21 +112,33 @@ void screen_main_handler(stk_msg_t* msg) {
         break;
 
     case SIG_BUTTON_MODE_LONG_PRESSED:
-        if (main_screen_info.music_state == MAIN_INFO_MUSIC_OFF) {
-            main_screen_info.music_state = MAIN_INFO_MUSIC_ON;
+        if (screen_track_info.music_status == MUSIC_OFF) {
+            screen_track_info.music_status = MUSIC_ON;
             dfplayer_play();
+            delay_ms(3);
+            dfplayer_set_volume(screen_track_info.volume);;
         }
-        else if (main_screen_info.music_state == MAIN_INFO_MUSIC_ON) {
-            main_screen_info.music_state = MAIN_INFO_MUSIC_OFF;
+        else if (screen_track_info.music_status == MUSIC_ON) {
+            screen_track_info.music_status = MUSIC_OFF;
+            dfplayer_stop();
+        }
+
+        else if (screen_track_info.music_status == MUSIC_LOOP) {
+            screen_track_info.music_status = MUSIC_OFF;
             dfplayer_stop();
         }
         /* update screen */
         view_screen_main_update();
         break;
 
+    case SIG_SCREEN_UPDATE:
+        view_screen_main_update();
+        break;
+
     case SIG_SCREEN_TRANS:
         main_screen_info.cursor_select = 0;
         view_render_force_clear();
+        timer_remove(TASK_DISPLAY_ID, SIG_SCREEN_UPDATE);
         SCREEN_TRANS(&screen_setting_handler);
         break;
 
@@ -139,7 +153,7 @@ void view_screen_main_init() {
 
     /* icons */
     view_render_draw_bitmap(&view_render_static, 15, 50, 100, 100, (uint16_t*)handmock_icon);
-    view_render_draw_bitmap(&view_render_static, 10, 4, 30, 24, (uint16_t*)wifi_icon);
+    view_render_draw_bitmap(&view_render_dynamic, 10, 4, 30, 24, (uint16_t*)wifi_icon);
     view_render_draw_bitmap(&view_render_static, 275, 0, 30, 30, (uint16_t*)setting_icon);
     view_render_draw_bitmap(&view_render_static, 160, 45, 28, 29, (uint16_t*)music_icon);
     view_render_draw_bitmap(&view_render_static, 160, 90, 25, 25, (uint16_t*)speed_icon);
@@ -147,8 +161,7 @@ void view_screen_main_init() {
 
     /* texts */
     view_render_print_string(&view_render_dynamic, 200, 52, "Stop", 2, ORANGE_COLOR);
-    view_render_print_string(&view_render_dynamic, 200, 95, "Level 1", 2, GREEN_COLOR);
-    view_render_print_string(&view_render_static, 200, 140, "...kg", 2, BROWN_COLOR);
+    view_render_print_string(&view_render_static, 240, 140, "kg", 2, BROWN_COLOR);
 
     /* cursor */
     view_icon_select(140, 47);
@@ -176,15 +189,19 @@ void view_screen_main_update() {
     }
 
     /* view music_state */
-    switch (main_screen_info.music_state) {
-    case MAIN_INFO_MUSIC_ON:
+    switch (screen_track_info.music_status) {
+    case MUSIC_ON:
         view_render_print_string(&view_render_dynamic, 200, 52, "Play", 2, GREEN_COLOR);
         break;
 
-    case MAIN_INFO_MUSIC_OFF:
+    case MUSIC_OFF:
         view_render_print_string(&view_render_dynamic, 200, 52, "Stop", 2, ORANGE_COLOR);
         break;
     
+    case MUSIC_LOOP:
+        view_render_print_string(&view_render_dynamic, 200, 52, "Loop", 2, ORANGE_COLOR);
+        break;
+
     default:
         break;
     }
@@ -209,6 +226,14 @@ void view_screen_main_update() {
     default:
         break;
     }
+
+    if (main_screen_info.wifi_status == 0x02) {
+        view_render_draw_bitmap(&view_render_dynamic, 10, 4, 30, 23, (uint16_t*)wifi_icon_connected);
+    }
+    else {
+        view_render_draw_bitmap(&view_render_dynamic, 10, 4, 30, 24, (uint16_t*)wifi_icon);
+    }
+    view_render_print_integer(&view_render_dynamic, 200, 140, main_screen_info.weight, 2, BROWN_COLOR);
 }
 
 void view_icon_select(int16_t x0, int16_t y0) {
