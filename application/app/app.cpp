@@ -86,8 +86,6 @@ void main_app() {
 
     /* wireless request */
     timer_set(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS, 60000, TIMER_PERIODIC);
-    uint16_t x = 0x0000;
-    st7789_view_render.view_render_dma_bitmap(0, 0, 320, 170, (uint16_t*)&x);
 
     /* kernel start */
     task_run();
