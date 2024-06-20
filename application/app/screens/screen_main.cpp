@@ -208,20 +208,22 @@ void view_screen_main_update() {
 
     /* view speed level */
     switch (main_screen_info.speed) {
-    case MAIN_INFO_MOTOR_SPEED_LEVEL_1:
-        view_render_print_string(&view_render_dynamic, 200, 95, "Level 1", 2, GREEN_COLOR);
-        pid_set(VELOCITY_SET_LEVEL_1);
-        break;
+    #if 0
+        case MAIN_INFO_MOTOR_SPEED_LEVEL_1:
+            view_render_print_string(&view_render_dynamic, 200, 95, "Level 1", 2, GREEN_COLOR);
+            pid_set(VELOCITY_SET_LEVEL_1);
+            break;
 
-    case MAIN_INFO_MOTOR_SPEED_LEVEL_2:
-        view_render_print_string(&view_render_dynamic, 200, 95, "Level 2", 2, YELLOW_COLOR);
-        pid_set(VELOCITY_SET_LEVEL_2);
-        break;
-    
-    case MAIN_INFO_MOTOR_SPEED_LEVEL_3:
-        view_render_print_string(&view_render_dynamic, 200, 95, "Level 3", 2, ORANGE_COLOR);
-        pid_set(VELOCITY_SET_LEVEL_3);
-        break;
+        case MAIN_INFO_MOTOR_SPEED_LEVEL_2:
+            view_render_print_string(&view_render_dynamic, 200, 95, "Level 2", 2, YELLOW_COLOR);
+            pid_set(VELOCITY_SET_LEVEL_2);
+            break;
+        
+        case MAIN_INFO_MOTOR_SPEED_LEVEL_3:
+            view_render_print_string(&view_render_dynamic, 200, 95, "Level 3", 2, ORANGE_COLOR);
+            pid_set(VELOCITY_SET_LEVEL_3);
+            break;
+    #endif
 
     default:
         break;
