@@ -58,14 +58,18 @@ void system_tick_handler() {
 
 void exti3_irq_handler() {
 	if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
+		ENTRY_CRITICAL();
 		exti_counter++;
+		EXIT_CRITICAL();
 		EXTI_ClearITPendingBit(EXTI_Line3);
 	}
 }
 
 void exti4_irq_handler() {
 	if(EXTI_GetITStatus(EXTI_Line4) != RESET) {
+		ENTRY_CRITICAL();
 		exti_counter++;
+		EXIT_CRITICAL();
 		EXTI_ClearITPendingBit(EXTI_Line4);
 	}
 }

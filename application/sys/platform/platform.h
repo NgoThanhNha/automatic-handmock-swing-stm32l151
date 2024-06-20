@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define RELEASE_EN (1)
+
 #define ENTRY_CRITICAL()            disable_interrupts()
 #define EXIT_CRITICAL()             enable_interrupts()
 
