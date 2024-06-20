@@ -47,19 +47,20 @@ void task_pid_handler(stk_msg_t* msg) {
         pid_attribute.prev_ui = 0;
         pid_attribute.sampling_time = (PID_INTERVAL) / 1000.0;
         break;
+    #if 0
+        case SIG_PID_RUN:
+            /* get current velocity */
+            ENTRY_CRITICAL();
+            get_encoder_counter = get_exti_value();
+            pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
+            reset_encoder_value();
+            EXIT_CRITICAL();
 
-    case SIG_PID_RUN:
-        /* get current velocity */
-        ENTRY_CRITICAL();
-        get_encoder_counter = get_exti_value();
-        pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
-        reset_encoder_value();
-        EXIT_CRITICAL();
-
-        /* generate the pwm value to driver */
-        pwm_to_motor = pid_run(pid_attribute.velocity_set);
-        PWM_GENERATION(pwm_to_motor);
-        break;
+            /* generate the pwm value to driver */
+            pwm_to_motor = pid_run(pid_attribute.velocity_set);
+            PWM_GENERATION(pwm_to_motor);
+            break;
+    #endif
 
     case SIG_PRINT_VELOCITY:
         APP_DBG("Current motor speed: %.2f\n", pid_attribute.current_velocity);
@@ -102,4 +103,24 @@ uint32_t pid_run(float velocity_set) {
 
 void pid_set(float speed_set) {
     pid_attribute.velocity_set = speed_set;
+}
+
+void polling_pid() {
+    static uint16_t polling_counter;
+    if (polling_counter == PID_INTERVAL) {
+        polling_counter = 0;
+        /* get current velocity */
+        ENTRY_CRITICAL();
+        get_encoder_counter = get_exti_value();
+        pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
+        reset_encoder_value();
+        EXIT_CRITICAL();
+
+        /* generate the pwm value to driver */
+        pwm_to_motor = pid_run(pid_attribute.velocity_set);
+        PWM_GENERATION(pwm_to_motor);
+    }
+    else {
+        polling_counter++;
+    }
 }

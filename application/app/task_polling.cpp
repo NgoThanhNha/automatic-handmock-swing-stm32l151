@@ -22,9 +22,11 @@
 
 #include "app.h"
 #include "task_list.h"
+#include "task_pid.h"
 #include "task_safety.h"
 
 void task_polling_handler() {
+    polling_pid();
     led_polling(&led_life);
     button_polling(&button_up);
     button_polling(&button_down);
