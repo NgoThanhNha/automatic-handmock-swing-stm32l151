@@ -105,16 +105,16 @@ float update_current(float new_current) {
     buffer_current[current_save_index] = new_current;
     current_save_index++;
     
-    if (current_save_index >= 10) {
+    if (current_save_index >= 5) {
         current_save_index = 0;
     }
 
     /* current average calculate */
     float sum = 0.0;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
         sum += buffer_current[i];
     }
-    float average = sum / 10;
+    float average = sum / 5;
 
     return average;
 }

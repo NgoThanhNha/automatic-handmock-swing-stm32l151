@@ -17,15 +17,15 @@
 
 #include "message.h"
 
-#define CURRENT_OVERLOAD                (300.0)
-#define CURRENT_NOLOAD                  (200.0)
-#define NOLOAD_TIME_STOP                (30)
-#define OVERLOAD_TIME_STOP              (10)
+#define CURRENT_OVERLOAD                    (300.0)
+#define CURRENT_NOLOAD                      (200.0)
+#define NOLOAD_TIME_STOP                    (30)
+#define OVERLOAD_TIME_STOP                  (10)
 
 #define POLLING_GET_CURRENT_DISABLE         (0x00)
 #define POLLING_GET_CURRENT_ENABLE          (0x01)
-#define GET_CURRENT_POLLING_PERIOD          (100)
-#define GET_VOLTAGE_POLLING_PERIOD          (150)
+#define GET_CURRENT_POLLING_PERIOD          (200)
+#define GET_VOLTAGE_POLLING_PERIOD          (250)
 
 /* DEFINE FOR ESTIMATE MASS */
 #define K_T                                 (1.0527)
