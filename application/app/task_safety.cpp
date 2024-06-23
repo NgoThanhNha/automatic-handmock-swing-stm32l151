@@ -82,7 +82,7 @@ void polling_checking_current() {
     if (polling_get_current_state == POLLING_GET_CURRENT_ENABLE) {
         switch (polling_counter) {
         case GET_CURRENT_POLLING_PERIOD:
-            safety.motor_current = update_current(ina219_read_current());
+            update_current(ina219_read_current());
             mass_estimated = estimate_mass((safety.motor_current) / 1000.0);
             main_screen_info.weight = (uint8_t)(mass_estimated);
             break;
@@ -92,6 +92,10 @@ void polling_checking_current() {
             safety.bus_voltage = ina219_read_bus_voltage();
             // task_post_pure_msg(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING);
             break;
+
+        case RETURN_MOTOR_CURRENT_PERIOD:
+        	safety.motor_current = update_current(ina219_read_current());
+        	break;
 
         default:
             break;
@@ -105,16 +109,16 @@ float update_current(float new_current) {
     buffer_current[current_save_index] = new_current;
     current_save_index++;
     
-    if (current_save_index >= 5) {
+    if (current_save_index >= 10) {
         current_save_index = 0;
     }
 
     /* current average calculate */
     float sum = 0.0;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         sum += buffer_current[i];
     }
-    float average = sum / 5;
+    float average = sum / 10;
 
     return average;
 }

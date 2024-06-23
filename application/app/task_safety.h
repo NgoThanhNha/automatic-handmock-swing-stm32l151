@@ -24,8 +24,9 @@
 
 #define POLLING_GET_CURRENT_DISABLE         (0x00)
 #define POLLING_GET_CURRENT_ENABLE          (0x01)
-#define GET_CURRENT_POLLING_PERIOD          (200)
-#define GET_VOLTAGE_POLLING_PERIOD          (250)
+#define GET_CURRENT_POLLING_PERIOD          (100)
+#define GET_VOLTAGE_POLLING_PERIOD          (200)
+#define RETURN_MOTOR_CURRENT_PERIOD 		(1000)
 
 /* DEFINE FOR ESTIMATE MASS */
 #define K_T                                 (1.0527)
