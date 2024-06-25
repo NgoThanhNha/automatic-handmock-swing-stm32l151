@@ -19,7 +19,6 @@
 
 #define MUSIC_OFF               (0x00)
 #define MUSIC_ON                (0x01)
-#define MUSIC_LOOP              (0x02)
 
 typedef struct {
     uint8_t music_status;

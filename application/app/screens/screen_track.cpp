@@ -89,11 +89,9 @@ void screen_track_handler(stk_msg_t* msg) {
         switch (screen_track_cursor) {
         case 0:
             screen_track_info.music_status = MUSIC_ON;
-            dfplayer_play();
-            delay_ms(3);
+            dfplayer_enable_loop();
+            delay_ms(5);
             dfplayer_set_volume(screen_track_info.volume);
-            delay_ms(3);
-            dfplayer_disable_loop();
             break;
         
         case 1:
@@ -121,11 +119,6 @@ void screen_track_handler(stk_msg_t* msg) {
         break;
 
     case SIG_BUTTON_MODE_LONG_PRESSED:
-        screen_track_info.music_status = MUSIC_LOOP;
-        dfplayer_play();
-        delay_ms(3);
-        dfplayer_enable_loop();
-        view_screen_track_update();
         break;
 
     case SIG_SCREEN_TRANS:
@@ -183,10 +176,6 @@ void view_screen_track_update() {
     
     case MUSIC_OFF:
         view_render_print_string(&view_render_dynamic, 250, 60, "Stop", 2, YELLOW_COLOR);
-        break;
-
-    case MUSIC_LOOP:
-        view_render_print_string(&view_render_dynamic, 250, 60, "Loop", 2, YELLOW_COLOR);
         break;
 
     default:

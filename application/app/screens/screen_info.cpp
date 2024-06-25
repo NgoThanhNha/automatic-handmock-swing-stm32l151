@@ -19,9 +19,9 @@
 #include "app.h"
 #include "task_list.h"
 #include "task_display.h"
-#include "screen_main.h"
 
-#include <math.h>
+#include "bitmaps.h"
+#include "screen_main.h"
 
 static void view_screen_info_init();
 
@@ -44,11 +44,6 @@ void screen_info_handler(stk_msg_t* msg) {
 }
 
 void view_screen_info_init() {
-    view_render_print_string(&view_render_static, 60, 20, " ___  ____  _  _ ", 2, CYAN_COLOR);
-    view_render_print_string(&view_render_static, 60, 37, "/ __)(_  _)( )/ )", 2, CYAN_COLOR);
-    view_render_print_string(&view_render_static, 60, 54, "\\__ \\  )(  (   (", 2, CYAN_COLOR);
-    view_render_print_string(&view_render_static, 60, 71, "(___/ (__) (_)\\_)", 2, CYAN_COLOR);
-    view_render_print_string(&view_render_static, 15, 110, "Automatic Handmock Swing", 2, WHITE_COLOR);
-    view_render_print_string(&view_render_static, 15, 135, "App version:", 2, WHITE_COLOR);
-    view_render_print_string(&view_render_static, 170, 135, "1.0", 2, GREEN_COLOR);
+    view_render_draw_bitmap(&view_render_static, 95, 20, 120, 98, (uint16_t*)big_handmock_icon);
+    view_render_print_string(&view_render_static, 15, 130, "Automatic Handmock Swing", 2, GRAY_COLOR);
 }

@@ -170,7 +170,7 @@ void view_render_print_float(view_render_t* me, int16_t x, int16_t y, float numb
     }
 }
 
-void view_render_draw_bitmap(view_render_t* me, int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap_image) {
+void view_render_draw_bitmap(view_render_t* me, int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap_image) {
     if (me->index_bitmap_item < NUMBER_ITEM_BITMAP_SIZE) {
         me->bitmap_item[me->index_bitmap_item].x = x;
         me->bitmap_item[me->index_bitmap_item].y = y;

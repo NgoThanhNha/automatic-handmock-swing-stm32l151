@@ -184,7 +184,7 @@ extern void view_render_fill_triangle(view_render_t* me, int16_t x0, int16_t y0,
 extern void view_render_print_string(view_render_t* me ,int16_t x, int16_t y, const char* string, uint8_t text_size, uint16_t color);
 extern void view_render_print_integer(view_render_t* me, int16_t x, int16_t y, int16_t number_print, uint8_t text_size, uint16_t color);
 extern void view_render_print_float(view_render_t* me, int16_t x, int16_t y, float number_print, uint8_t text_size, uint16_t color);
-extern void view_render_draw_bitmap(view_render_t* me, int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap_image);
+extern void view_render_draw_bitmap(view_render_t* me, int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap_image);
 extern void view_render_clear(view_render_t* me);
 extern void view_render_force_clear();
 

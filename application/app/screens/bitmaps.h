@@ -17,6 +17,7 @@ extern const uint16_t weight_icon[];
 extern const uint16_t setting_icon[];
 extern const uint16_t music_icon[];
 extern const uint16_t big_music_icon[];
+extern const uint16_t big_handmock_icon[];
 
 #ifdef __cplusplus
 }

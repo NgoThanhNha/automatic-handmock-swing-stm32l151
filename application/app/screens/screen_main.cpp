@@ -114,16 +114,11 @@ void screen_main_handler(stk_msg_t* msg) {
     case SIG_BUTTON_MODE_LONG_PRESSED:
         if (screen_track_info.music_status == MUSIC_OFF) {
             screen_track_info.music_status = MUSIC_ON;
-            dfplayer_play();
-            delay_ms(3);
-            dfplayer_set_volume(screen_track_info.volume);;
+            dfplayer_enable_loop();
+            delay_ms(5);
+            dfplayer_set_volume(screen_track_info.volume);
         }
         else if (screen_track_info.music_status == MUSIC_ON) {
-            screen_track_info.music_status = MUSIC_OFF;
-            dfplayer_stop();
-        }
-
-        else if (screen_track_info.music_status == MUSIC_LOOP) {
             screen_track_info.music_status = MUSIC_OFF;
             dfplayer_stop();
         }
@@ -196,10 +191,6 @@ void view_screen_main_update() {
 
     case MUSIC_OFF:
         view_render_print_string(&view_render_dynamic, 200, 52, "Stop", 2, ORANGE_COLOR);
-        break;
-    
-    case MUSIC_LOOP:
-        view_render_print_string(&view_render_dynamic, 200, 52, "Loop", 2, ORANGE_COLOR);
         break;
 
     default:

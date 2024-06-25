@@ -79,6 +79,8 @@ void main_app() {
 
     /* music player init */
     dfplayer_init();
+    delay_ms(5);
+    screen_track_info.volume = 10;
     
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
