@@ -85,8 +85,8 @@ void main_app() {
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
 
-    /* wireless request */
-    timer_set(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS, 1000, TIMER_PERIODIC);
+    /* wireless connect */
+    timer_set(TASK_SM_ID, SIG_SM_WAITING_CONNECT, 60000, TIMER_ONE_SHOT);
 
     /* kernel start */
     task_run();

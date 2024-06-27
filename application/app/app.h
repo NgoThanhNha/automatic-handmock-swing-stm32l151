@@ -59,6 +59,8 @@ enum task_sm_signals {
 
     SIG_SM_RES_WIFI_CONNECTED,
     SIG_SM_RES_WIFI_DISCONNECTED,
+
+    SIG_SM_WAITING_CONNECT,
 };
 
 #ifdef __cplusplus
