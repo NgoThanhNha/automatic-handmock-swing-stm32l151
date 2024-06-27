@@ -22,18 +22,22 @@
 #include "app.h"
 #include "task_list.h"
 #include "task_polling.h"
+#include "task_pid.h"
 
 #include "screen_main.h"
 
 safety_attr_t safety;
-float buffer_current[10];
-float mass_estimated;
-static uint8_t current_save_index;
-static uint8_t polling_get_current_state = POLLING_GET_CURRENT_ENABLE;
 
-void polling_checking_current();
-static float update_current(float new_current);
+/* for read motor current */
+float buffer_current[40];
+static uint8_t current_save_index;
+float sum = 0.0;
+
+/* estimate the weight */
+float mass_estimated;
+
 static float estimate_mass(float motor_current);
+static void update_current(float new_current);
 
 void task_safety_handler(stk_msg_t* msg) {
     switch (msg->sig) {
@@ -41,8 +45,6 @@ void task_safety_handler(stk_msg_t* msg) {
         if (safety.motor_current < CURRENT_NOLOAD) {
             safety.check_noload++;
             if (safety.check_noload == NOLOAD_TIME_STOP) {
-                polling_get_current_state = POLLING_GET_CURRENT_DISABLE;
-                timer_remove(TASK_PID_ID, SIG_PID_RUN);
                 PWM_GENERATION(0);
                 APP_PRINT("[MOTOR] NO LOAD\n");
                 APP_PRINT("[MOTOR] Stoped!\n");
@@ -56,8 +58,6 @@ void task_safety_handler(stk_msg_t* msg) {
         if (safety.motor_current > CURRENT_OVERLOAD) {
             safety.check_overload++;
             if (safety.check_overload == OVERLOAD_TIME_STOP) {
-                polling_get_current_state = POLLING_GET_CURRENT_DISABLE;
-                timer_remove(TASK_PID_ID, SIG_PID_RUN);
                 PWM_GENERATION(0);
                 APP_PRINT("[MOTOR] OVERLOAD\n");
                 APP_PRINT("[MOTOR] Stoped!\n");
@@ -79,48 +79,38 @@ void task_safety_handler(stk_msg_t* msg) {
 
 void polling_checking_current() {
     static uint16_t polling_counter;
-    if (polling_get_current_state == POLLING_GET_CURRENT_ENABLE) {
-        switch (polling_counter) {
-        case GET_CURRENT_POLLING_PERIOD:
-            update_current(ina219_read_current());
-            mass_estimated = estimate_mass((safety.motor_current) / 1000.0);
-            main_screen_info.weight = (uint8_t)(mass_estimated);
-            break;
-        
-        case GET_VOLTAGE_POLLING_PERIOD:
-            polling_counter = 0;
-            safety.bus_voltage = ina219_read_bus_voltage();
-            // task_post_pure_msg(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING);
-            break;
-
-        case RETURN_MOTOR_CURRENT_PERIOD:
-        	safety.motor_current = update_current(ina219_read_current());
-        	break;
-
-        default:
-            break;
-        }
-        polling_counter++;
+    if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
+        // safety.motor_current = ina219_read_current();
+        update_current(ina219_read_current());
+        polling_counter = 0;
     }
+    else {
+        polling_counter++;
+    } 
 }
 
-float update_current(float new_current) {
-    /* update new value */
-    buffer_current[current_save_index] = new_current;
-    current_save_index++;
-    
-    if (current_save_index >= 10) {
-        current_save_index = 0;
+void polling_checking_voltage() {
+    static uint16_t polling_counter;
+    if (polling_counter == GET_VOLTAGE_POLLING_PERIOD) {
+        safety.bus_voltage = ina219_read_bus_voltage();
+        float get_duty = get_duty_cycle();
+        safety.motor_voltage = safety.bus_voltage * get_duty;
+        polling_counter = 0;
     }
+    else {
+        polling_counter++;
+    } 
+}
 
-    /* current average calculate */
-    float sum = 0.0;
-    for (int i = 0; i < 10; i++) {
-        sum += buffer_current[i];
+void polling_checking_power() {
+    static uint16_t polling_counter;
+    if (polling_counter == GET_POWER_POLLING_PERIOD) {
+        safety.power = ina219_read_power_mW();
+        polling_counter = 0;
     }
-    float average = sum / 10;
-
-    return average;
+    else {
+        polling_counter++;
+    } 
 }
 
 float estimate_mass(float motor_current) {
@@ -128,4 +118,23 @@ float estimate_mass(float motor_current) {
     float force = torque / SHAFT_RADIUS;
     float mass = force / g;
     return mass;
+}
+
+void update_current(float new_current) {
+    /* update new value */
+    buffer_current[current_save_index] = new_current;
+    current_save_index++;
+    
+    if (current_save_index >= 40) {
+        ENTRY_CRITICAL();
+        current_save_index = 0;
+        /* current average calculate */
+        float sum = 0.0;
+        for (int i = 0; i < 40; i++) {
+            sum += buffer_current[i];
+        }
+        float average = sum / 40;
+        safety.motor_current = average;
+        EXIT_CRITICAL();
+    }
 }

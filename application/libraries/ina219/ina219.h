@@ -78,6 +78,7 @@ extern uint8_t ina219_init();
 extern float ina219_read_bus_voltage();
 extern float ina219_read_current();
 extern float ina219_read_shunt_voltage();
+extern float ina219_read_power_mW();
 
 #ifdef __cplusplus
 }

@@ -90,6 +90,11 @@ float ina219_read_current() {
 	return (result / ina219_calib_attr.current_div_mA);
 }
 
+float ina219_read_power_mW() {
+	uint16_t result = ina219_read_16(INA219_REG_POWER);
+	return (result * ina219_calib_attr.power_multiplier_mW);	
+}
+
 uint8_t ina219_init() {
 	ina219_calib_attr.current_div_mA = 0; 
 	ina219_calib_attr.power_multiplier_mW = 0.0;

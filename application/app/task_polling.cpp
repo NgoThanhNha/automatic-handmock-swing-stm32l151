@@ -32,5 +32,6 @@ void task_polling_handler() {
     button_polling(&button_down);
     button_polling(&button_mode);
     polling_checking_current();
+    polling_checking_voltage();
+    polling_checking_power();
 }
-

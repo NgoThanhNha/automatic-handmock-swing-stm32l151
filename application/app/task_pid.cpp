@@ -24,15 +24,13 @@
 #include "task_list.h"
 #include "screen_main.h"
 
+/* for pid calculate */
 uint16_t get_encoder_counter;
 uint32_t pwm_to_motor;
+float voltage_for_dbg;
 pid_attr_t pid_attribute;
 
-float bus_voltage;
-float shunt_voltage;
-float motor_current;
-
-static uint32_t pid_run(float velocity_set);
+static float pid_run(float velocity_set);
 
 void task_pid_handler(stk_msg_t* msg) {
     switch (msg->sig) {
@@ -47,20 +45,6 @@ void task_pid_handler(stk_msg_t* msg) {
         pid_attribute.prev_ui = 0;
         pid_attribute.sampling_time = (PID_INTERVAL) / 1000.0;
         break;
-    #if 0
-        case SIG_PID_RUN:
-            /* get current velocity */
-            ENTRY_CRITICAL();
-            get_encoder_counter = get_exti_value();
-            pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
-            reset_encoder_value();
-            EXIT_CRITICAL();
-
-            /* generate the pwm value to driver */
-            pwm_to_motor = pid_run(pid_attribute.velocity_set);
-            PWM_GENERATION(pwm_to_motor);
-            break;
-    #endif
 
     case SIG_PRINT_VELOCITY:
         APP_DBG("Current motor speed: %.2f\n", pid_attribute.current_velocity);
@@ -71,7 +55,7 @@ void task_pid_handler(stk_msg_t* msg) {
     }
 }
 
-uint32_t pid_run(float velocity_set) {
+float pid_run(float velocity_set) {
     /* error */
     float error_velocity = velocity_set - pid_attribute.current_velocity;
 
@@ -85,18 +69,23 @@ uint32_t pid_run(float velocity_set) {
     float ui = pid_attribute.prev_ui + (pid_attribute.ki * error_velocity * pid_attribute.sampling_time);
 
     /* pid value */
-    uint32_t pid_calculated = (uint32_t)(up + ud + ui);
+    float pid_calculated = (up + ud + ui);
+        if (ui > 1332) {
+            ui = 1332;
+        } else if (ui < -1332) {
+            ui = -1332;
+        }
     pid_attribute.prev_ui = ui;
 
     /* assign current error to previous error */
     pid_attribute.prev_error = error_velocity;
 
     /* generate to output */
-    if (pid_calculated < 0) {
-        pid_calculated = 0;
+    if (pid_calculated < 200) {
+        pid_calculated = 200;
     }
-    else if (pid_calculated >= 0xFFFFFFFF) {
-        pid_calculated = 0xFFFFFFFF;
+    else if (pid_calculated >= TIMER_PERIOD_MAX) {
+        pid_calculated = TIMER_PERIOD_MAX - 1;
     }
     return pid_calculated;
 }
@@ -107,20 +96,43 @@ void pid_set(float speed_set) {
 
 void polling_pid() {
     static uint16_t polling_counter;
-    if (polling_counter == PID_INTERVAL) {
-        polling_counter = 0;
-        /* get current velocity */
-        ENTRY_CRITICAL();
-        get_encoder_counter = get_exti_value();
-        pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
-        reset_encoder_value();
-        EXIT_CRITICAL();
+    if (pid_attribute.status == PID_ENABLE) {
+        if (polling_counter == PID_INTERVAL) {
+            polling_counter = 0;
 
-        /* generate the pwm value to driver */
-        pwm_to_motor = pid_run(pid_attribute.velocity_set);
-        PWM_GENERATION(pwm_to_motor);
+            /* get current velocity */
+            ENTRY_CRITICAL();
+            get_encoder_counter = get_exti_value();
+            pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
+            reset_encoder_value();
+            EXIT_CRITICAL();
+
+            /* generate the pwm value to driver */
+            pwm_to_motor = (uint32_t)pid_run(pid_attribute.velocity_set);
+            PWM_GENERATION(pwm_to_motor);
+        }
+        else {
+            polling_counter++;
+        }
     }
     else {
-        polling_counter++;
+        if (polling_counter == PID_INTERVAL) {
+            polling_counter = 0;
+
+            /* get current velocity */
+            ENTRY_CRITICAL();
+            get_encoder_counter = get_exti_value();
+            pid_attribute.current_velocity = (float)((get_encoder_counter * 50.0) / 44.0) * 60.0;
+            reset_encoder_value();
+            EXIT_CRITICAL();
+            PWM_GENERATION((uint32_t)((voltage_for_dbg / 12.0) * 1332));
+        }
+        else {
+            polling_counter++;
+        }
     }
+}
+
+float get_duty_cycle() {
+    return (pwm_to_motor / (TIMER_PERIOD_MAX));
 }

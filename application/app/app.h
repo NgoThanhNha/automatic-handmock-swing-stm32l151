@@ -24,7 +24,6 @@ enum app_signals {
     SIG_VELOCITY_CALCULATE = 0x00,
     SIG_PRINT_VELOCITY,
     SIG_PID_INIT,
-    SIG_PID_RUN,
 
     /* TASK DISPLAY */
     SIG_SCREEN_TRANS,

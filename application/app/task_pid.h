@@ -18,8 +18,13 @@
 #include "message.h"
 
 #define PID_INTERVAL            (20)
+#define TIMER_PERIOD_MAX        (1332.0)
+
+#define PID_DISABLE             (0x00)
+#define PID_ENABLE              (0x01)
 
 typedef struct {
+    uint8_t status = PID_DISABLE;
     float kp;
     float kd;
     float ki;
@@ -34,6 +39,7 @@ extern pid_attr_t pid_attribute;
 extern void task_pid_handler(stk_msg_t* msg);
 extern void pid_set(float speed_set);
 extern void polling_pid();
+extern float get_duty_cycle();
 
 #ifdef __cplusplus
 }

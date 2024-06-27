@@ -190,7 +190,7 @@ void pwm_init() {
 	/* pwm config */
 	L298_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	L298_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	L298_OCInitStructure.TIM_Pulse = 333;
+	L298_OCInitStructure.TIM_Pulse = 0;
 	L298_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OC3Init(L298_TIMER, &L298_OCInitStructure);
 	TIM_OC3PreloadConfig(L298_TIMER, TIM_OCPreload_Enable);
