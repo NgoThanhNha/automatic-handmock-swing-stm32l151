@@ -17,8 +17,7 @@
 
 #include "message.h"
 
-#define CURRENT_OVERLOAD                    (300.0)
-#define CURRENT_NOLOAD                      (200.0)
+#define CURRENT_NO_LOAD                     (120)
 #define NOLOAD_TIME_STOP                    (30)
 #define OVERLOAD_TIME_STOP                  (10)
 
@@ -35,6 +34,23 @@
 #define ESTIMATE_CURRENT_NOLOAD             (0.13)
 #define SHAFT_RADIUS                        (0.003)   
 #define g                                   (9.81)
+
+/* 
+define current for change setpoint
+    50 - 104: no load
+    105 - 125: 7100
+    180 - 205: 6900
+    245 - 300: 6700
+    > 320: OVERLOAD
+*/
+#define CURRENT_POINT_1                     (50)  
+#define CURRENT_POINT_2                     (104)
+#define CURRENT_POINT_3                     (105) 
+#define CURRENT_POINT_4                     (125) 
+#define CURRENT_POINT_5                     (180)
+#define CURRENT_POINT_6                     (205)
+#define CURRENT_POINT_7                     (245)
+#define CURRENT_POINT_8                     (300)
 
 typedef struct {
     float bus_voltage;

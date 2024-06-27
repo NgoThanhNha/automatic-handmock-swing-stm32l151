@@ -75,6 +75,9 @@ void link_phy_handler(stk_msg_t* msg) {
         APP_PRINT("[LINK_PHY] Wifi_Status: %d\n", link_phy_wl_info.wifi_status);
         APP_PRINT("[LINK_PHY] Wifi_SSID: %s\n", link_phy_wl_info.ssid);
         APP_PRINT("[LINK_PHY] Wifi_Password: %s\n", link_phy_wl_info.password);
+        if (link_phy_wl_info.wifi_status) {
+            timer_set(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS, 1000, TIMER_PERIODIC);
+        }
 
         /* update to screen */
         task_post_pure_msg(TASK_DISPLAY_ID, SIG_SCREEN_UPDATE);

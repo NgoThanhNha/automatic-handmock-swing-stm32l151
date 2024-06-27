@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define STK_PURE_MSG_POOL_SIZE          (16)
+#define STK_PURE_MSG_POOL_SIZE          (32)
 #define STK_MSG_NULL 					((stk_msg_t*)0)
 
 typedef struct stk_msg_t {

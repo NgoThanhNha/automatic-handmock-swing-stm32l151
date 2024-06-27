@@ -84,9 +84,7 @@ void main_app() {
     
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
-
-    /* wireless connect */
-    timer_set(TASK_SM_ID, SIG_SM_WAITING_CONNECT, 60000, TIMER_ONE_SHOT);
+    timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
 
     /* kernel start */
     task_run();

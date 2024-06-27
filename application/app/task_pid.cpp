@@ -31,10 +31,13 @@ float voltage_for_dbg;
 pid_attr_t pid_attribute;
 
 static float pid_run(float velocity_set);
+void pid_enable();
+void pid_disable();
 
 void task_pid_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_PID_INIT:
+        pid_attribute.status = PID_ENABLE;
         pid_attribute.kp = 0.02567;
         pid_attribute.kd = 0.0000867;
         pid_attribute.ki = 0.5007;
@@ -135,4 +138,15 @@ void polling_pid() {
 
 float get_duty_cycle() {
     return (pwm_to_motor / (TIMER_PERIOD_MAX));
+}
+
+void pid_enable() {
+    pid_attribute.status = PID_ENABLE;
+}
+
+void pid_disable() {
+    pid_attribute.status = PID_DISABLE;
+    pid_attribute.velocity_set = 0;
+    pwm_to_motor = 0;
+    PWM_GENERATION(pwm_to_motor);
 }

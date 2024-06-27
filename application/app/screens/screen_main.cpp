@@ -28,6 +28,7 @@
 #include "task_pid.h"
 
 #include "screen_setting.h"
+#include "screen_network.h"
 #include "screen_track.h"
 
 static void view_screen_main_update();
@@ -220,7 +221,7 @@ void view_screen_main_update() {
         break;
     }
 
-    if (main_screen_info.wifi_status == 0x02) {
+    if (main_screen_info.wifi_status == WL_STATE_CONNECTED) {
         view_render_draw_bitmap(&view_render_dynamic, 10, 4, 30, 23, (uint16_t*)wifi_icon_connected);
     }
     else {

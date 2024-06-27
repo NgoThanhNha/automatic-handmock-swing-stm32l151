@@ -154,9 +154,9 @@ __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[])(void) = {
 		default_handler,						//	I2C2 Error
 		default_handler,						//	SPI1
 		default_handler,						//	SPI2
-		default_handler,						//	USART1
+		0,										//	USART1
 		usart2_irq_handler,					    //	USART2
-		default_handler,						//	USART3
+		0,										//	USART3
 		default_handler,						//	EXTI Line 15..10
 		default_handler,						//	RTC Alarm through EXTI Line
 		default_handler,						//	USB FS Wakeup from suspend

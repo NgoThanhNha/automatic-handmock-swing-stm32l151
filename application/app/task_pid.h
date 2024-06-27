@@ -24,7 +24,7 @@
 #define PID_ENABLE              (0x01)
 
 typedef struct {
-    uint8_t status = PID_DISABLE;
+    uint8_t status;
     float kp;
     float kd;
     float ki;
@@ -40,6 +40,8 @@ extern void task_pid_handler(stk_msg_t* msg);
 extern void pid_set(float speed_set);
 extern void polling_pid();
 extern float get_duty_cycle();
+extern void pid_enable();
+extern void pid_disable();
 
 #ifdef __cplusplus
 }

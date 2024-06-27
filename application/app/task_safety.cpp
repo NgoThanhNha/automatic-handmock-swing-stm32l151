@@ -36,16 +36,19 @@ float sum = 0.0;
 /* estimate the weight */
 float mass_estimated;
 
+/* alternative functions */
 static float estimate_mass(float motor_current);
 static void update_current(float new_current);
+static void change_setpoint(float motor_current);
 
 void task_safety_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_CHECK_CURRENT_WARNING:
-        if (safety.motor_current < CURRENT_NOLOAD) {
+        if (safety.motor_current < CURRENT_NO_LOAD) {
+            APP_PRINT("[TASK_SAFETY] SIG_CHECK_CURRENT_WARNING\n");
             safety.check_noload++;
             if (safety.check_noload == NOLOAD_TIME_STOP) {
-                PWM_GENERATION(0);
+                pid_disable();
                 APP_PRINT("[MOTOR] NO LOAD\n");
                 APP_PRINT("[MOTOR] Stoped!\n");
             }
@@ -55,10 +58,10 @@ void task_safety_handler(stk_msg_t* msg) {
         }
 
         /* check overload */
-        if (safety.motor_current > CURRENT_OVERLOAD) {
+        if (safety.motor_current > CURRENT_POINT_8) {
             safety.check_overload++;
             if (safety.check_overload == OVERLOAD_TIME_STOP) {
-                PWM_GENERATION(0);
+                pid_disable();
                 APP_PRINT("[MOTOR] OVERLOAD\n");
                 APP_PRINT("[MOTOR] Stoped!\n");
             }
@@ -80,7 +83,6 @@ void task_safety_handler(stk_msg_t* msg) {
 void polling_checking_current() {
     static uint16_t polling_counter;
     if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
-        // safety.motor_current = ina219_read_current();
         update_current(ina219_read_current());
         polling_counter = 0;
     }
@@ -135,6 +137,21 @@ void update_current(float new_current) {
         }
         float average = sum / 40;
         safety.motor_current = average;
+        change_setpoint(safety.motor_current);
         EXIT_CRITICAL();
+    }
+}
+
+void change_setpoint(float motor_current) {
+    if (pid_attribute.status == PID_ENABLE) {
+        if ((motor_current >= CURRENT_POINT_3) && (motor_current < CURRENT_POINT_4)) {
+            pid_set(7200);
+        }
+        else if ((motor_current >= CURRENT_POINT_5) && (motor_current < CURRENT_POINT_6)) {
+            pid_set(6900);
+        }
+        else if ((motor_current >= CURRENT_POINT_7) && (motor_current < CURRENT_POINT_8)) {
+            pid_set(6700);
+        }
     }
 }
