@@ -45,12 +45,13 @@ void task_safety_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_CHECK_CURRENT_WARNING:
         if (safety.motor_current < CURRENT_NO_LOAD) {
-            APP_PRINT("[TASK_SAFETY] SIG_CHECK_CURRENT_WARNING\n");
+            APP_PRINT("[TASK_SAFETY] CURRENT_NO_LOAD\n");
             safety.check_noload++;
             if (safety.check_noload == NOLOAD_TIME_STOP) {
                 pid_disable();
                 APP_PRINT("[MOTOR] NO LOAD\n");
                 APP_PRINT("[MOTOR] Stoped!\n");
+                timer_remove(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING);
             }
         }
         else {
@@ -64,6 +65,7 @@ void task_safety_handler(stk_msg_t* msg) {
                 pid_disable();
                 APP_PRINT("[MOTOR] OVERLOAD\n");
                 APP_PRINT("[MOTOR] Stoped!\n");
+                timer_remove(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING);
             }
         }
         else {
@@ -81,14 +83,16 @@ void task_safety_handler(stk_msg_t* msg) {
 }
 
 void polling_checking_current() {
-    static uint16_t polling_counter;
-    if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
-        update_current(ina219_read_current());
-        polling_counter = 0;
+    if (pid_attribute.status == PID_ENABLE) {
+        static uint16_t polling_counter;
+        if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
+            update_current(ina219_read_current());
+            polling_counter = 0;
+        }
+        else {
+            polling_counter++;
+        } 
     }
-    else {
-        polling_counter++;
-    } 
 }
 
 void polling_checking_voltage() {

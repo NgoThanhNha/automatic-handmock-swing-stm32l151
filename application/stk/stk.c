@@ -30,7 +30,7 @@ void task_create(task_t* task_table_create) {
     event_signal.qtail = STK_MSG_NULL;
 
     SYS_PRINT("Welcome to my application!\n");
-    SYS_PRINT("Application tasks created: %d\n", size_of_task_list);
+    SYS_PRINT("Application created tasks: %d\n", size_of_task_list);
     SYS_PRINT("\n");
     SYS_PRINT("\n");
 }
