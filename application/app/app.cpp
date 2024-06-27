@@ -86,7 +86,7 @@ void main_app() {
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
 
     /* wireless request */
-    timer_set(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS, 60000, TIMER_PERIODIC);
+    timer_set(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS, 1000, TIMER_PERIODIC);
 
     /* kernel start */
     task_run();

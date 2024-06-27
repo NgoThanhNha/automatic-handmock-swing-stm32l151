@@ -82,8 +82,8 @@ void link_phy_handler(stk_msg_t* msg) {
 
     case SIG_LINK_PHY_SEND_DATA:
         APP_PRINT("[LINK_PHY] SIG_LINK_PHY_SEND_DATA_OUT\n");
-        link_phy_fw_machine_data((uint8_t)(safety.bus_voltage), (uint8_t)((safety.motor_current / 10.0)), (main_screen_info.speed), (main_screen_info.weight));
-        APP_PRINT("[LINK_PHY] Voltage: %d\n", (uint8_t)(safety.bus_voltage));
+        link_phy_fw_machine_data((uint8_t)(safety.motor_voltage), (uint8_t)((safety.motor_current / 10.0)), (main_screen_info.speed), (main_screen_info.weight));
+        APP_PRINT("[LINK_PHY] Voltage: %d\n", (uint8_t)(safety.motor_voltage));
         APP_PRINT("[LINK_PHY] Current: %d\n", (uint8_t)((safety.motor_current / 10.0)));
         APP_PRINT("[LINK_PHY] Speed: %d\n", (main_screen_info.speed));
         APP_PRINT("[LINK_PHY] Weight: %d\n", (main_screen_info.weight));
