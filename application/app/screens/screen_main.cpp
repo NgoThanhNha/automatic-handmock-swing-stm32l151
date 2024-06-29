@@ -199,6 +199,7 @@ void view_screen_main_update() {
     }
 
     /* view speed level */
+    view_render_print_integer(&view_render_dynamic, 200, 95, pid_attribute.velocity_set, 2, GREEN_COLOR);
     switch (main_screen_info.speed) {
     #if 0
         case MAIN_INFO_MOTOR_SPEED_LEVEL_1:

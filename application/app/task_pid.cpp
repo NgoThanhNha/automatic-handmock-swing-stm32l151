@@ -149,4 +149,5 @@ void pid_disable() {
     pid_attribute.velocity_set = 0;
     pwm_to_motor = 0;
     PWM_GENERATION(pwm_to_motor);
+    timer_remove(TASK_SM_ID, SIG_SM_REQ_WIFI_STATUS);
 }
