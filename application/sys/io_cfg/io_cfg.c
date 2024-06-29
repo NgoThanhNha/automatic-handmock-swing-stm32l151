@@ -485,95 +485,95 @@ void i2c_init() {
 }
 
 int i2c_write(uint8_t device_addr, uint8_t reg_addr, uint8_t *data, int length) {
-    /* wait until I2C is not busy */
-    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
+	/* wait until I2C is not busy */
+	while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
 
-    /* generate START condition */
-    I2C_GenerateSTART(I2C1, ENABLE);
+	/* generate START condition */
+	I2C_GenerateSTART(I2C1, ENABLE);
 
-    /* wait for EV5 (start condition generated) */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
+	/* wait for EV5 (start condition generated) */
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
-    /* send device address for write */
-    I2C_Send7bitAddress(I2C1, device_addr, I2C_Direction_Transmitter);
+	/* send device address for write */
+	I2C_Send7bitAddress(I2C1, device_addr, I2C_Direction_Transmitter);
 
-    /* wait for EV6 - address acknowledged */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+	/* wait for EV6 - address acknowledged */
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-    /* send register address */
-    I2C_SendData(I2C1, reg_addr);
+	/* send register address */
+	I2C_SendData(I2C1, reg_addr);
 
 	/* wait for EV8_2 - register address transfer finished */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
-    /* send data bytes */
-    for (int i = 0; i < length; i++) {
-        I2C_SendData(I2C1, data[i]);
-        /* Wait for EV8_2 - data byte transfer finished */
-        while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-    }
+	/* send data bytes */
+	for (int i = 0; i < length; i++) {
+		I2C_SendData(I2C1, data[i]);
+		/* Wait for EV8_2 - data byte transfer finished */
+		while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+	}
 
-    /* generate STOP condition */
-    I2C_GenerateSTOP(I2C1, ENABLE);
+	/* generate STOP condition */
+	I2C_GenerateSTOP(I2C1, ENABLE);
 
-    return 0;
+	return 0;
 }
 
 int i2c_read(uint8_t device_addr, uint8_t reg_addr, uint8_t *data, int length) {
-    /* wait until I2C is not busy */
-    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
+	/* wait until I2C is not busy */
+	while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
 
-    /* generate START condition */
-    I2C_GenerateSTART(I2C1, ENABLE);
+	/* generate START condition */
+	I2C_GenerateSTART(I2C1, ENABLE);
 
-    /* wait for EV5 - start condition generated */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
+	/* wait for EV5 - start condition generated */
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
-    /* send device address for write */
-    I2C_Send7bitAddress(I2C1, device_addr, I2C_Direction_Transmitter);
+	/* send device address for write */
+	I2C_Send7bitAddress(I2C1, device_addr, I2C_Direction_Transmitter);
 
 	/* wait for EV6 - address acknowledged */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-    /* send register address */
-    I2C_SendData(I2C1, reg_addr);
+	/* send register address */
+	I2C_SendData(I2C1, reg_addr);
 
-    /* wait for EV8_2 - register address transfer finished */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+	/* wait for EV8_2 - register address transfer finished */
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
-    /* generate START condition again - repeated start */
-    I2C_GenerateSTART(I2C1, ENABLE);
+	/* generate START condition again - repeated start */
+	I2C_GenerateSTART(I2C1, ENABLE);
 
-    /* wait for EV5 - start condition generated */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
+	/* wait for EV5 - start condition generated */
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
-    /* send device address for read */
-    I2C_Send7bitAddress(I2C1, device_addr, I2C_Direction_Receiver);
+	/* send device address for read */
+	I2C_Send7bitAddress(I2C1, device_addr, I2C_Direction_Receiver);
 
-    /* wait for EV6 - address acknowledged */
-    while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
+	/* wait for EV6 - address acknowledged */
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
 
-    /* read data bytes */
-    for (int i = 0; i < length; i++) {
-        if (i == length - 1) {
-            /* disable Acknowledgement for the last byte */
-            I2C_AcknowledgeConfig(I2C1, DISABLE);
-        }
+	/* read data bytes */
+	for (int i = 0; i < length; i++) {
+		if (i == length - 1) {
+			/* disable Acknowledgement for the last byte */
+			I2C_AcknowledgeConfig(I2C1, DISABLE);
+		}
 
-        /* wait for EV7 (data received) */
-        while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
+		/* wait for EV7 (data received) */
+		while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
 
-        /* read data from I2C data register */
-        data[i] = I2C_ReceiveData(I2C1);
-    }
+		/* read data from I2C data register */
+		data[i] = I2C_ReceiveData(I2C1);
+	}
 
-    /* generate STOP condition */
-    I2C_GenerateSTOP(I2C1, ENABLE);
+	/* generate STOP condition */
+	I2C_GenerateSTOP(I2C1, ENABLE);
 
-    /* re-enable Acknowledgement for next reception */
-    I2C_AcknowledgeConfig(I2C1, ENABLE);
+	/* re-enable Acknowledgement for next reception */
+	I2C_AcknowledgeConfig(I2C1, ENABLE);
 
-    return 0;
+	return 0;
 }
 
 void button_up_init() {
@@ -676,9 +676,9 @@ void usart3_put_char(uint8_t c) {
 }
 
 void usart3_put_chars(uint8_t* str, uint16_t len) {
-    for (uint16_t i = 0; i < len; i++) {
-        usart3_put_char(str[i]);
-    }
+	for (uint16_t i = 0; i < len; i++) {
+		usart3_put_char(str[i]);
+	}
 }
 
 void io_init() {
