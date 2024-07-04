@@ -93,8 +93,11 @@ float pid_run(float velocity_set) {
     return pid_calculated;
 }
 
-void pid_set(float speed_set) {
+void pid_set(float speed_set, float kp_set, float ki_set, float kd_set) {
     pid_attribute.velocity_set = speed_set;
+    pid_attribute.kp = kp_set;
+    pid_attribute.ki = ki_set;
+    pid_attribute.kd = kd_set;
 }
 
 void polling_pid() {

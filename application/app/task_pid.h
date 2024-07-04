@@ -37,7 +37,7 @@ typedef struct {
 
 extern pid_attr_t pid_attribute;
 extern void task_pid_handler(stk_msg_t* msg);
-extern void pid_set(float speed_set);
+extern void pid_set(float speed_set, float kp_set, float ki_set, float kd_set);
 extern void polling_pid();
 extern float get_duty_cycle();
 extern void pid_enable();

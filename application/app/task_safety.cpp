@@ -82,7 +82,7 @@ void task_safety_handler(stk_msg_t* msg) {
     }
 }
 
-void polling_checking_current() {
+    void polling_checking_current() {
     if (pid_attribute.status == PID_ENABLE) {
         static uint16_t polling_counter;
         if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
@@ -149,13 +149,13 @@ void update_current(float new_current) {
 void change_setpoint(float motor_current) {
     if (pid_attribute.status == PID_ENABLE) {
         if ((motor_current >= CURRENT_POINT_3) && (motor_current < CURRENT_POINT_4)) {
-            pid_set(7200);
+            pid_set(6650, 0.65139, 0.60269, 0.0024);
         }
         else if ((motor_current >= CURRENT_POINT_5) && (motor_current < CURRENT_POINT_6)) {
-            pid_set(6900);
+            pid_set(6800, 1.30278, 0.12035, 0.012);
         }
         else if ((motor_current >= CURRENT_POINT_7) && (motor_current < CURRENT_POINT_8)) {
-            pid_set(6700);
+            pid_set(6800, 1.30278, 0.12035, 0.012);
         }
     }
 }

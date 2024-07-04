@@ -84,7 +84,7 @@ void main_app() {
     
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
-    timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
+    // timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
 
     /* kernel start */
     task_run();

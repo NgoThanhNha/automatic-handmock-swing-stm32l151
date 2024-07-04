@@ -21,10 +21,10 @@
 
 #define LINK_PHY_FORWARD_MSG_OUT(des_task_id, sig)          link_phy_fw_msg(des_task_id, sig)
 
-#define LINK_PHY_UART_RECEIVE_BUFFER_SIZE            (100)
-#define LINK_PHY_UART_TRANS_BUFFER_SIZE              (16)
+#define LINK_PHY_UART_RECEIVE_BUFFER_SIZE                   (100)
+#define LINK_PHY_UART_TRANS_BUFFER_SIZE                     (16)
 
-/* stk msg from esplink */
+/* stk msg from link phy */
 typedef struct {
     uint8_t des_task_id;
     uint8_t sig;
@@ -38,6 +38,7 @@ typedef struct {
     uint8_t weight;
 } link_phy_fw_data_t;
 
+/* wireless info */
 typedef struct {
     uint8_t wifi_status;
     uint8_t lenght_ssid;
