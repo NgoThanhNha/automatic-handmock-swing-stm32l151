@@ -72,12 +72,15 @@ float pid_run(float velocity_set) {
     float ui = pid_attribute.prev_ui + (pid_attribute.ki * error_velocity * pid_attribute.sampling_time);
 
     /* pid value */
+    
     float pid_calculated = (up + ud + ui);
-        if (ui > 1332) {
-            ui = 1332;
-        } else if (ui < -1332) {
-            ui = -1332;
-        }
+    if (ui>1332){
+        ui=1332;
+    }
+    else if(ui<-1332){
+        ui=-1332;
+    }
+
     pid_attribute.prev_ui = ui;
 
     /* assign current error to previous error */

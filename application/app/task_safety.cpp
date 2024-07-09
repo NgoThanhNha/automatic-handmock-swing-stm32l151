@@ -82,7 +82,7 @@ void task_safety_handler(stk_msg_t* msg) {
     }
 }
 
-    void polling_checking_current() {
+void polling_checking_current() {
     if (pid_attribute.status == PID_ENABLE) {
         static uint16_t polling_counter;
         if (polling_counter == GET_CURRENT_POLLING_PERIOD) {
@@ -134,6 +134,7 @@ void update_current(float new_current) {
     if (current_save_index >= 40) {
         ENTRY_CRITICAL();
         current_save_index = 0;
+
         /* current average calculate */
         float sum = 0.0;
         for (int i = 0; i < 40; i++) {

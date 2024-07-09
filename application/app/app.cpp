@@ -67,7 +67,7 @@ void main_app() {
     view_render_init(VERTICAL);
 
     /* screen manager init */
-    scr_mng_init(&app_screen, screen_info_handler);
+    scr_mng_init(&app_screen, screen_main_handler);
 
     /* power sensing init */
     ina219_init();
@@ -79,7 +79,11 @@ void main_app() {
     
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
+<<<<<<< Updated upstream
     timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
+=======
+    //timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
+>>>>>>> Stashed changes
 
     /* kernel start */
     task_run();
