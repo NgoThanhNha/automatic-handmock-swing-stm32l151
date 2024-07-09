@@ -20,6 +20,8 @@
 #include "task_sm.h"
 #include "link_phy.h"
 
+uint8_t task_polling_status = TASK_POLLING_DISABLE;
+
 task_t app_task_table[] = {
     /*************************************************************************/
     /* SYSTEM TASKS */

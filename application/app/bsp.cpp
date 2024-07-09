@@ -16,7 +16,6 @@
 #include "console.h"
 #include "hard_timer.h"
 #include "button.h"
-#include "buzzer.h"
 #include "screen_manager.h"
 
 #include "app.h"
@@ -36,7 +35,6 @@ void button_up_callback(void* _button) {
     case BUTTON_STATE_PRESSED:
         APP_PRINT("[BUTTON_CALLBACK] BUTTON_UP_PRESSED\n");
         task_post_pure_msg(TASK_DISPLAY_ID, SIG_BUTTON_UP_PRESSED);
-        buzzer_play_tone(tone_1beep);
         break;
 
     case BUTTON_STATE_LONG_PRESSED:
@@ -59,7 +57,6 @@ void button_down_callback(void* _button) {
     switch (button->state) {
     case BUTTON_STATE_PRESSED:
         APP_PRINT("[BUTTON_CALLBACK] BUTTON_DOWN_PRESSED\n");
-        buzzer_play_tone(tone_1beep);
         task_post_pure_msg(TASK_DISPLAY_ID, SIG_BUTTON_DOWN_PRESSED);
         break;
 
@@ -84,7 +81,6 @@ void button_mode_callback(void* _button) {
     switch (button->state) {
     case BUTTON_STATE_PRESSED:
         APP_PRINT("[BUTTON_CALLBACK] BUTTON_MODE_PRESSED\n");
-        buzzer_play_tone(tone_1beep);
         task_post_pure_msg(TASK_DISPLAY_ID, SIG_BUTTON_MODE_PRESSED);
         break;
 

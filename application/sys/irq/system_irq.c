@@ -17,7 +17,6 @@
 #include "platform.h"
 #include "console.h"
 #include "hard_timer.h"
-#include "buzzer.h"
 
 #include "app.h"
 #include "link_phy.h"

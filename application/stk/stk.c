@@ -94,5 +94,8 @@ void task_scheduler() {
 void task_run() {
     for (;;) {
         task_scheduler();
+        if (task_polling_status != TASK_POLLING_ENABLE) {
+            task_polling_status = TASK_POLLING_ENABLE;
+        }
     }
 }

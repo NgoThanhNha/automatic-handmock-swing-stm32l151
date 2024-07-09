@@ -38,9 +38,9 @@ void task_pid_handler(stk_msg_t* msg) {
     switch (msg->sig) {
     case SIG_PID_INIT:
         pid_attribute.status = PID_ENABLE;
-        pid_attribute.kp = 0.02567;
-        pid_attribute.kd = 0.0000867;
-        pid_attribute.ki = 0.5007;
+        pid_attribute.kp = 1.023;
+        pid_attribute.kd = 0.575;
+        pid_attribute.ki = 3.167;
         pid_attribute.velocity_set = VELOCITY_SET_LEVEL_2;
         main_screen_info.speed = MAIN_INFO_MOTOR_SPEED_LEVEL_2;
         pid_attribute.current_velocity = 0;
@@ -84,8 +84,8 @@ float pid_run(float velocity_set) {
     pid_attribute.prev_error = error_velocity;
 
     /* generate to output */
-    if (pid_calculated < 200) {
-        pid_calculated = 200;
+    if (pid_calculated < 0) {
+        pid_calculated = 0;
     }
     else if (pid_calculated >= TIMER_PERIOD_MAX) {
         pid_calculated = TIMER_PERIOD_MAX - 1;

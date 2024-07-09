@@ -20,7 +20,7 @@
 
 #include "message.h"
 
-#define STK_VERSION             "1.0"
+#define STK_VERSION             "1.1"
 
 #define STK_DISABLE             (0x00)
 #define STK_ENABLE              (0x01)

@@ -21,7 +21,6 @@
 
 #include "platform.h"
 #include "console.h"
-#include "buzzer.h"
 
 /* define the addresses of data and bss sections */
 extern uint32_t _sidata, _sdata, _edata, _sbss, _ebss, _estack;
@@ -145,7 +144,7 @@ __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[])(void) = {
 		default_handler,						//	TIM9
 		default_handler,						//	TIM10
 		default_handler,						//	TIM11
-		buzzer_irq,								//	TIM2
+		default_handler,						//	TIM2
 		default_handler,						//	TIM3
 		default_handler,						//	TIM4
 		default_handler,						//	I2C1 Event

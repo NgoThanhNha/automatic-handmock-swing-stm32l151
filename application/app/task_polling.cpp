@@ -26,12 +26,14 @@
 #include "task_safety.h"
 
 void task_polling_handler() {
-    polling_pid();
-    led_polling(&led_life);
-    button_polling(&button_up);
-    button_polling(&button_down);
-    button_polling(&button_mode);
-    polling_checking_current();
-    polling_checking_voltage();
-    polling_checking_power();
+    if (task_polling_status == TASK_POLLING_ENABLE) {
+        polling_pid();
+        led_polling(&led_life);
+        button_polling(&button_up);
+        button_polling(&button_down);
+        button_polling(&button_mode);
+        polling_checking_current();
+        polling_checking_voltage();
+        polling_checking_power();
+    }
 }

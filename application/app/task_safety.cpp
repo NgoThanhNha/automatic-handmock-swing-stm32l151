@@ -145,11 +145,11 @@ void update_current(float new_current) {
         EXIT_CRITICAL();
     }
 }
-
+ 
 void change_setpoint(float motor_current) {
     if (pid_attribute.status == PID_ENABLE) {
         if ((motor_current >= CURRENT_POINT_3) && (motor_current < CURRENT_POINT_4)) {
-            pid_set(6650, 0.65139, 0.60269, 0.0024);
+            pid_set(6800, 0.65139, 0.60269, 0.0024);
         }
         else if ((motor_current >= CURRENT_POINT_5) && (motor_current < CURRENT_POINT_6)) {
             pid_set(6800, 1.30278, 0.12035, 0.012);

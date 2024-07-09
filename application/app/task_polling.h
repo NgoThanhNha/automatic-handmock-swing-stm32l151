@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+extern uint8_t task_polling_status;
 extern void task_polling_handler();
 
 #ifdef __cplusplus

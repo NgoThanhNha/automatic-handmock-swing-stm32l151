@@ -15,6 +15,9 @@
 #include <stdint.h>
 #include "stk.h"
 
+#define TASK_POLLING_DISABLE         (0x00)
+#define TASK_POLLING_ENABLE          (0x01)
+
 enum {
     /* KERNEL TASKS */
     TASK_TIMER_TICK_ID,
@@ -30,6 +33,10 @@ enum {
     STK_TASK_EOT_ID,
 };
 
+/* for enable polling with system tick */
+extern uint8_t task_polling_status;
+
+/* application task table */
 extern task_t app_task_table[];
 
 #ifdef __cplusplus

@@ -14,7 +14,6 @@
 #include "platform.h"
 #include "console.h"
 #include "button.h"
-#include "buzzer.h"
 #include "screen_manager.h"
 #include "view_render.h"
 

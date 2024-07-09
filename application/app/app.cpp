@@ -19,7 +19,6 @@
 #include "hard_timer.h"
 #include "console.h"
 #include "led.h"
-#include "buzzer.h"
 #include "button.h"
 #include "screen_manager.h"
 #include "view_render.h"
@@ -58,10 +57,6 @@ void main_app() {
     /* led init */
     led_init_func(&led_life, led_life_on, led_life_off);
     led_blink_set(&led_life, 1000);
-    
-    /* buzzer init */
-    buzzer_init();
-    buzzer_play_tone(tone_startup);
 
     /* button init */
     button_init_func(&button_up, button_up_read, button_up_callback);
@@ -84,7 +79,7 @@ void main_app() {
     
     /* pid init */
     task_post_pure_msg(TASK_PID_ID, SIG_PID_INIT);
-    // timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
+    timer_set(TASK_SAFETY_ID, SIG_CHECK_CURRENT_WARNING, 1000, TIMER_PERIODIC);
 
     /* kernel start */
     task_run();
