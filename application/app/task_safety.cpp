@@ -32,6 +32,7 @@ safety_attr_t safety;
 float buffer_current[40];
 static uint8_t current_save_index;
 float sum = 0.0;
+float max_motor_current;
 
 /* estimate the weight */
 float mass_estimated;
@@ -146,7 +147,7 @@ void update_current(float new_current) {
         EXIT_CRITICAL();
     }
 }
- 
+
 void change_setpoint(float motor_current) {
     if (pid_attribute.status == PID_ENABLE) {
         if ((motor_current >= CURRENT_POINT_3) && (motor_current < CURRENT_POINT_4)) {
