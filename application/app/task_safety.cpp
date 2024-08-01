@@ -88,7 +88,7 @@ void task_safety_handler(stk_msg_t* msg) {
                 max_motor_current = buffer_current[i];
             }
         }
-        break;
+        break;  
 
     default:
         break;
@@ -155,10 +155,10 @@ void update_current(float new_current) {
         }
         float average = sum / 40;
         safety.motor_current = average;
-        buffer_max_current[current_max_index] = safety.motor_current;
+        buffer_max_current[current_max_index] = average;
         current_max_index++;
         if (current_max_index == 3) {
-            current_max_index;
+            current_max_index = 0;
             task_post_pure_msg(TASK_SAFETY_ID, SIG_CHECK_MAX_CURRENT);
         }
         change_setpoint(safety.motor_current);
